@@ -1,51 +1,237 @@
 {% extends 'core/base.html' %}
 
 {% block content %}
-<div class="max-w-4xl mx-auto">
-    <div class="text-center mb-12 animate-fade-in-up">
-        <h1 class="text-3xl font-bold text-gray-900 mb-4">🏆 Hall of Fame</h1>
-        <p class="text-gray-500">Anggota paling berkontribusi di Media Moklet.</p>
+<div class="max-w-7xl mx-auto">
+    <div class="mb-8 animate-fade-in-up">
+        <h1 class="text-3xl font-bold text-gray-900 mb-2">🏆 Leaderboard</h1>
+        <p class="text-gray-500">Top contributors Media Moklet</p>
     </div>
 
-    <div class="bg-white rounded-2xl shadow-xl border border-gray-100 overflow-hidden animate-fade-in-up delay-100">
-        <div class="p-6 bg-gradient-to-r from-primary-600 to-purple-600">
-            <div class="flex justify-between items-center text-white">
-                <span class="font-bold text-lg">Rank</span>
-                <span class="font-bold text-lg">Member</span>
-                <span class="font-bold text-lg">XP Points</span>
-            </div>
+    <!-- Tabs -->
+    <div class="bg-white rounded-xl shadow-sm border border-gray-100 mb-6"
+        x-data="{ activeTab: '{{ active_tab|default:'global' }}' }">
+        <div class="border-b border-gray-200">
+            <nav class="flex -mb-px flex-wrap">
+                <button @click="activeTab = 'global'"
+                    :class="activeTab === 'global' ? 'border-green-600 text-green-600' : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'"
+                    class="py-4 px-6 border-b-2 font-medium text-sm transition-colors">
+                    🌍 Global
+                </button>
+                <button @click="activeTab = 'journalism'"
+                    :class="activeTab === 'journalism' ? 'border-green-600 text-green-600' : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'"
+                    class="py-4 px-6 border-b-2 font-medium text-sm transition-colors">
+                    📰 Jurnalistik
+                </button>
+                <button @click="activeTab = 'design'"
+                    :class="activeTab === 'design' ? 'border-green-600 text-green-600' : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'"
+                    class="py-4 px-6 border-b-2 font-medium text-sm transition-colors">
+                    🎨 Design
+                </button>
+                <button @click="activeTab = 'photography'"
+                    :class="activeTab === 'photography' ? 'border-green-600 text-green-600' : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'"
+                    class="py-4 px-6 border-b-2 font-medium text-sm transition-colors">
+                    📷 Fotografi
+                </button>
+                <button @click="activeTab = 'angkatan'"
+                    :class="activeTab === 'angkatan' ? 'border-green-600 text-green-600' : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'"
+                    class="py-4 px-6 border-b-2 font-medium text-sm transition-colors">
+                    🎓 Per Angkatan
+                </button>
+            </nav>
         </div>
-        <div class="divide-y divide-gray-100">
-            {% for user in top_users %}
-            <div class="p-6 flex items-center justify-between hover:bg-gray-50 transition-colors">
-                <div class="flex items-center gap-6">
-                    <div
-                        class="w-8 h-8 flex items-center justify-center font-bold text-xl 
-                        {% if forloop.counter == 1 %}text-yellow-500 text-3xl{% elif forloop.counter == 2 %}text-gray-400 text-2xl{% elif forloop.counter == 3 %}text-amber-600 text-2xl{% else %}text-gray-400{% endif %}">
-                        #{{ forloop.counter }}
+
+        <!-- Global Leaderboard -->
+        <div x-show="activeTab === 'global'" class="p-6">
+            <div class="space-y-3">
+                {% for user_data in global_leaders %}
+                <div
+                    class="flex items-center gap-4 p-4 rounded-xl border border-gray-100 hover:border-green-200 hover:bg-green-50 transition-all">
+                    <!-- Rank -->
+                    <div class="flex-shrink-0 w-12 text-center">
+                        {% if forloop.counter == 1 %}
+                        <span class="text-3xl">🥇</span>
+                        {% elif forloop.counter == 2 %}
+                        <span class="text-3xl">🥈</span>
+                        {% elif forloop.counter == 3 %}
+                        <span class="text-3xl">🥉</span>
+                        {% else %}
+                        <span class="text-xl font-bold text-gray-400">#{{ forloop.counter }}</span>
+                        {% endif %}
                     </div>
-                    <div class="flex items-center gap-4">
+
+                    <!-- Photo -->
+                    <div class="flex-shrink-0">
+                        {% if user_data.profile_photo %}
+                        <img src="{{ user_data.profile_photo.url }}" alt="{{ user_data.username }}"
+                            class="w-14 h-14 rounded-full object-cover border-2 border-gray-200">
+                        {% else %}
                         <div
-                            class="w-12 h-12 rounded-full bg-gray-200 flex items-center justify-center text-gray-600 font-bold text-lg ring-2 ring-white shadow-md">
-                            {{ user.username|slice:":1"|upper }}
+                            class="w-14 h-14 rounded-full bg-gradient-to-br from-green-400 to-emerald-600 flex items-center justify-center text-white text-xl font-bold border-2 border-gray-200">
+                            {{ user_data.username|slice:":1"|upper }}
                         </div>
-                        <div>
-                            <h3 class="font-bold text-gray-900 flex items-center gap-2">
-                                {{ user.get_full_name|default:user.username }}
-                                {% if user.is_verified %}
-                                <svg class="w-4 h-4 text-blue-500" fill="currentColor" viewBox="0 0 20 20">
-                                    <path fill-rule="evenodd"
-                                        d="M6.267 3.455a3.066 3.066 0 001.745-.723 3.066 3.066 0 013.976 0 3.066 3.066 0 001.745.723 3.066 3.066 0 012.812 2.812c.051.643.304 1.254.723 1.745a3.066 3.066 0 010 3.976 3.066 3.066 0 00-.723 1.745 3.066 3.066 0 01-2.812 2.812 3.066 3.066 0 00-1.745.723 3.066 3.066 0 01-3.976 0 3.066 3.066 0 00-1.745-.723 3.066 3.066 0 01-2.812-2.812 3.066 3.066 0 00-.723-1.745 3.066 3.066 0 010-3.976 3.066 3.066 0 00.723-1.745 3.066 3.066 0 012.812-2.812zm7.44 5.252a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z"
-                                        clip-rule="evenodd"></path>
-                                </svg>
-                                {% endif %}
-                            </h3>
-                            <p class="text-sm text-gray-500">{{ user.get_division_display }}</p>
+                        {% endif %}
+                    </div>
+
+                    <!-- Info -->
+                    <div class="flex-1">
+                        <h3 class="font-bold text-gray-900">
+                            {% if user_data.first_name %}{{ user_data.first_name }} {{ user_data.last_name }}{% else
+                            %}{{ user_data.username }}{% endif %}
+                        </h3>
+                        <p class="text-sm text-gray-500">{{ user_data.get_division_display }} • Angkatan {{
+                            user_data.angkatan }}</p>
+                        <!-- Badges -->
+                        {% if user_data.badges.all %}
+                        <div class="flex flex-wrap gap-1 mt-1">
+                            {% for badge in user_data.badges.all %}
+                            <span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-xs font-semibold
+                                {% if badge.color == 'blue' %}bg-blue-100 text-blue-700
+                                {% elif badge.color == 'green' %}bg-green-100 text-green-700
+                                {% elif badge.color == 'purple' %}bg-purple-100 text-purple-700
+                                {% elif badge.color == 'red' %}bg-red-100 text-red-700
+                                {% elif badge.color == 'yellow' %}bg-yellow-100 text-yellow-700
+                                {% else %}bg-gray-100 text-gray-700{% endif %}">
+                                {{ badge.icon }} {{ badge.name }}
+                            </span>
+                            {% endfor %}
                         </div>
+                        {% endif %}
+                    </div>
+
+                    <!-- Points -->
+                    <div class="text-right">
+                        <div class="text-2xl font-bold text-green-600">{{ user_data.points }}</div>
+                        <div class="text-xs text-gray-500">XP</div>
                     </div>
                 </div>
-                <div class="font-bold text-primary-600 text-xl">
-                    {{ user.points }} XP
+                {% empty %}
+                <div class="text-center py-12 text-gray-500">
+                    <div class="text-6xl mb-4">📊</div>
+                    <p>Belum ada data leaderboard.</p>
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+
+        <!-- Jurnalistik -->
+        <div x-show="activeTab === 'journalism'" class="p-6">
+            <h2 class="text-2xl font-bold text-gray-900 mb-6">📰 Top Jurnalistik</h2>
+            <div class="space-y-2">
+                {% for user_data in journalism_leaders %}
+                <div class="flex items-center gap-4 p-3 rounded-lg border border-gray-100 hover:bg-gray-50">
+                    <span class="w-8 text-center font-bold text-gray-400">#{{ forloop.counter }}</span>
+                    {% if user_data.profile_photo %}
+                    <img src="{{ user_data.profile_photo.url }}" alt="{{ user_data.username }}"
+                        class="w-10 h-10 rounded-full object-cover">
+                    {% else %}
+                    <div
+                        class="w-10 h-10 rounded-full bg-gradient-to-br from-green-400 to-emerald-600 flex items-center justify-center text-white font-bold">
+                        {{ user_data.username|slice:":1"|upper }}
+                    </div>
+                    {% endif %}
+                    <div class="flex-1">
+                        <p class="font-semibold text-gray-900">{% if user_data.first_name %}{{ user_data.first_name }}
+                            {{ user_data.last_name }}{% else %}{{ user_data.username }}{% endif %}</p>
+                        <p class="text-xs text-gray-500">Angkatan {{ user_data.angkatan }}</p>
+                    </div>
+                    <div class="text-lg font-bold text-green-600">{{ user_data.points }} XP</div>
+                </div>
+                {% empty %}
+                <div class="text-center py-12 text-gray-500">
+                    <p>Belum ada data untuk divisi Jurnalistik.</p>
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+
+        <!-- Design -->
+        <div x-show="activeTab === 'design'" class="p-6">
+            <h2 class="text-2xl font-bold text-gray-900 mb-6">🎨 Top Design</h2>
+            <div class="space-y-2">
+                {% for user_data in design_leaders %}
+                <div class="flex items-center gap-4 p-3 rounded-lg border border-gray-100 hover:bg-gray-50">
+                    <span class="w-8 text-center font-bold text-gray-400">#{{ forloop.counter }}</span>
+                    {% if user_data.profile_photo %}
+                    <img src="{{ user_data.profile_photo.url }}" alt="{{ user_data.username }}"
+                        class="w-10 h-10 rounded-full object-cover">
+                    {% else %}
+                    <div
+                        class="w-10 h-10 rounded-full bg-gradient-to-br from-green-400 to-emerald-600 flex items-center justify-center text-white font-bold">
+                        {{ user_data.username|slice:":1"|upper }}
+                    </div>
+                    {% endif %}
+                    <div class="flex-1">
+                        <p class="font-semibold text-gray-900">{% if user_data.first_name %}{{ user_data.first_name }}
+                            {{ user_data.last_name }}{% else %}{{ user_data.username }}{% endif %}</p>
+                        <p class="text-xs text-gray-500">Angkatan {{ user_data.angkatan }}</p>
+                    </div>
+                    <div class="text-lg font-bold text-green-600">{{ user_data.points }} XP</div>
+                </div>
+                {% empty %}
+                <div class="text-center py-12 text-gray-500">
+                    <p>Belum ada data untuk divisi Design.</p>
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+
+        <!-- Fotografi -->
+        <div x-show="activeTab === 'photography'" class="p-6">
+            <h2 class="text-2xl font-bold text-gray-900 mb-6">📷 Top Fotografi</h2>
+            <div class="space-y-2">
+                {% for user_data in photography_leaders %}
+                <div class="flex items-center gap-4 p-3 rounded-lg border border-gray-100 hover:bg-gray-50">
+                    <span class="w-8 text-center font-bold text-gray-400">#{{ forloop.counter }}</span>
+                    {% if user_data.profile_photo %}
+                    <img src="{{ user_data.profile_photo.url }}" alt="{{ user_data.username }}"
+                        class="w-10 h-10 rounded-full object-cover">
+                    {% else %}
+                    <div
+                        class="w-10 h-10 rounded-full bg-gradient-to-br from-green-400 to-emerald-600 flex items-center justify-center text-white font-bold">
+                        {{ user_data.username|slice:":1"|upper }}
+                    </div>
+                    {% endif %}
+                    <div class="flex-1">
+                        <p class="font-semibold text-gray-900">{% if user_data.first_name %}{{ user_data.first_name }}
+                            {{ user_data.last_name }}{% else %}{{ user_data.username }}{% endif %}</p>
+                        <p class="text-xs text-gray-500">Angkatan {{ user_data.angkatan }}</p>
+                    </div>
+                    <div class="text-lg font-bold text-green-600">{{ user_data.points }} XP</div>
+                </div>
+                {% empty %}
+                <div class="text-center py-12 text-gray-500">
+                    <p>Belum ada data untuk divisi Fotografi.</p>
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+
+        <!-- Per Angkatan -->
+        <div x-show="activeTab === 'angkatan'" class="p-6">
+            {% for angkatan, users in angkatan_leaders.items %}
+            <div class="mb-8">
+                <h3 class="text-lg font-bold text-gray-900 mb-4">🎓 Angkatan {{ angkatan }}</h3>
+                <div class="space-y-2">
+                    {% for user_data in users %}
+                    <div class="flex items-center gap-4 p-3 rounded-lg border border-gray-100 hover:bg-gray-50">
+                        <span class="w-8 text-center font-bold text-gray-400">#{{ forloop.counter }}</span>
+                        {% if user_data.profile_photo %}
+                        <img src="{{ user_data.profile_photo.url }}
+" alt="{{ user_data.username }}" class="w-10 h-10 rounded-full object-cover">
+                        {% else %}
+                        <div
+                            class="w-10 h-10 rounded-full bg-gradient-to-br from-green-400 to-emerald-600 flex items-center justify-center text-white font-bold">
+                            {{ user_data.username|slice:":1"|upper }}
+                        </div>
+                        {% endif %}
+                        <div class="flex-1">
+                            <p class="font-semibold text-gray-900">{% if user_data.first_name %}{{ user_data.first_name
+                                }} {{ user_data.last_name }}{% else %}{{ user_data.username }}{% endif %}</p>
+                            <p class="text-xs text-gray-500">{{ user_data.get_division_display }}</p>
+                        </div>
+                        <div class="text-lg font-bold text-green-600">{{ user_data.points }} XP</div>
+                    </div>
+                    {% endfor %}
                 </div>
             </div>
             {% endfor %}

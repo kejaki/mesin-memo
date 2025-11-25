@@ -7,7 +7,10 @@ class CustomUserCreationForm(UserCreationForm):
         model = User
         fields = UserCreationForm.Meta.fields + ('class_name', 'nisn', 'angkatan', 'division', 'phone_number', 'email')
 
-class ProfileEditForm(forms.ModelForm):
+class UserEditForm(forms.ModelForm):
     class Meta:
         model = User
-        fields = ['first_name', 'last_name', 'email', 'class_name', 'angkatan', 'phone_number', 'division']
+        fields = ['first_name', 'last_name', 'email', 'phone_number', 'class_name', 'profile_photo', 'angkatan', 'division']
+        widgets = {
+            'profile_photo': forms.FileInput(attrs={'accept': 'image/*'}),
+        }

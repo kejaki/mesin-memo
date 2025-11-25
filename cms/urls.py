@@ -2,7 +2,7 @@ from django.urls import path
 from . import views
 
 urlpatterns = [
-    path('dashboard/', views.dashboard, name='cms_dashboard'),
+    path('dashboard/', views.cms_dashboard, name='cms_dashboard'),
     path('create/', views.create_content, name='create_content'),
     path('manage/', views.manage_content, name='manage_content'),  # Admin content management
     path('content/<int:content_id>/', views.content_detail, name='content_detail'),

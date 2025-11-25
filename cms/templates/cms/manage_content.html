@@ -1,0 +1,150 @@
+{% extends 'core/base.html' %}
+
+{% block content %}
+<div class="max-w-7xl mx-auto">
+    <div class="mb-8 animate-fade-in-up">
+        <h1 class="text-3xl font-bold text-gray-900 mb-2">⚙️ Manage Content</h1>
+        <p class="text-gray-500">Kelola semua konten dan status</p>
+    </div>
+
+    <!-- Filters -->
+    <div class="bg-white rounded-xl shadow-sm border border-gray-100 p-4 mb-6">
+        <form method="GET" class="flex gap-4 items-end">
+            <div class="flex-1">
+                <label class="block text-sm font-medium text-gray-700 mb-1">Search</label>
+                <input type="text" name="search" value="{{ search_query }}" placeholder="Cari judul atau deskripsi..."
+                    class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-green-500">
+            </div>
+            <div>
+                <label class="block text-sm font-medium text-gray-700 mb-1">Status</label>
+                <select name="status"
+                    class="px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-green-500">
+                    <option value="">Semua Status</option>
+                    <option value="IDEA" {% if current_status=='IDEA' %}selected{% endif %}>Ide</option>
+                    <option value="IN_PROGRESS" {% if current_status=='IN_PROGRESS' %}selected{% endif %}>Sedang
+                        Dikerjakan</option>
+                    <option value="REVIEW" {% if current_status=='REVIEW' %}selected{% endif %}>Review</option>
+                    <option value="FINAL" {% if current_status=='FINAL' %}selected{% endif %}>Final</option>
+                    <option value="UPLOADED" {% if current_status=='UPLOADED' %}selected{% endif %}>Diupload</option>
+                </select>
+            </div>
+            <button type="submit" class="px-6 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 font-medium">
+                🔍 Filter
+            </button>
+            <a href="{% url 'manage_content' %}"
+                class="px-4 py-2 bg-gray-100 text-gray-700 rounded-lg hover:bg-gray-200 font-medium">
+                Reset
+            </a>
+        </form>
+    </div>
+
+    <!-- Content Table -->
+    <div class="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden">
+        <div class="overflow-x-auto">
+            <table class="min-w-full divide-y divide-gray-200">
+                <thead class="bg-gray-50">
+                    <tr>
+                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                            Konten</th>
+                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                            Status</th>
+                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                            Author</th>
+                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Roles
+                        </th>
+                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                            Target</th>
+                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                            Actions</th>
+                    </tr>
+                </thead>
+                <tbody class="bg-white divide-y divide-gray-200">
+                    {% for content in contents %}
+                    <tr class="hover:bg-gray-50">
+                        <td class="px-6 py-4">
+                            <div>
+                                <div class="flex items-center gap-2 mb-1">
+                                    <span class="px-2 py-0.5 bg-pink-100 text-pink-700 rounded text-xs font-semibold">
+                                        {{ content.get_platform_display }}
+                                    </span>
+                                    {% if content.is_claimable %}
+                                    <span
+                                        class="px-2 py-0.5 bg-yellow-100 text-yellow-700 rounded text-xs font-semibold">
+                                        Claimable
+                                    </span>
+                                    {% endif %}
+                                </div>
+                                <div class="text-sm font-medium text-gray-900">{{ content.title }}</div>
+                                <div class="text-xs text-gray-500">{{ content.get_content_type_display }}</div>
+                            </div>
+                        </td>
+                        <td class="px-6 py-4 whitespace-nowrap">
+                            <span class="px-2 py-1 inline-flex text-xs leading-5 font-semibold rounded-full 
+                                {% if content.status == 'IDEA' %}bg-gray-100 text-gray-800
+                                {% elif content.status == 'IN_PROGRESS' %}bg-blue-100 text-blue-800
+                                {% elif content.status == 'REVIEW' %}bg-amber-100 text-amber-800
+                                {% elif content.status == 'FINAL' %}bg-purple-100 text-purple-800
+                                {% elif content.status == 'UPLOADED' %}bg-green-100 text-green-800
+                                {% endif %}">
+                                {{ content.get_status_display }}
+                            </span>
+                        </td>
+                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                            {% if content.author %}
+                            {{ content.author.username }}
+                            {% else %}
+                            <span class="text-gray-400">-</span>
+                            {% endif %}
+                        </td>
+                        <td class="px-6 py-4 text-sm text-gray-500">
+                            {% if content.job_roles.all %}
+                            <div class="flex flex-wrap gap-1">
+                                {% for role in content.job_roles.all %}
+                                <span class="px-2 py-0.5 bg-green-100 text-green-700 rounded text-xs">
+                                    {{ role.get_role_type_display|truncatechars:10 }} ({{ role.get_assigned_count }}/{{
+                                    role.slots_needed }})
+                                </span>
+                                {% endfor %}
+                            </div>
+                            {% else %}
+                            <span class="text-gray-400">-</span>
+                            {% endif %}
+                        </td>
+                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                            {% if content.target_date %}
+                            {{ content.target_date|date:"d M Y" }}
+                            {% else %}
+                            <span class="text-gray-400">-</span>
+                            {% endif %}
+                        </td>
+                        <td class="px-6 py-4 whitespace-nowrap text-sm font-medium">
+                            <div class="flex gap-2">
+                                <a href="{% url 'content_detail' content.id %}"
+                                    class="text-blue-600 hover:text-blue-900" title="View">
+                                    👁️
+                                </a>
+                                <a href="{% url 'edit_content' content.id %}"
+                                    class="text-green-600 hover:text-green-900" title="Edit">
+                                    ✏️
+                                </a>
+                                <a href="{% url 'delete_content' content.id %}" class="text-red-600 hover:text-red-900"
+                                    title="Delete" onclick="return confirm('Yakin hapus?')">
+                                    🗑️
+                                </a>
+                            </div>
+                        </td>
+                    </tr>
+                    {% empty %}
+                    <tr>
+                        <td colspan="6" class="px-6 py-12 text-center text-gray-500">
+                            <div class="text-4xl mb-2">📭</div>
+                            <p>Tidak ada konten yang ditemukan.</p>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+{% endblock %}

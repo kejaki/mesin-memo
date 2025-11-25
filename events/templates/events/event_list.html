@@ -2,6 +2,23 @@
 
 {% block content %}
 <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+    <div class="mb-8 flex justify-between items-center">
+        <div>
+            <h1 class="text-3xl font-bold text-gray-900 mb-2">📅 Events Media Moklet</h1>
+            <p class="text-gray-500">Kelola dan ikuti event Media Moklet</p>
+        </div>
+        {% if user.can_create_event %}
+        <a href="{% url 'create_event' %}"
+            class="px-6 py-3 bg-green-600 text-white rounded-xl hover:bg-green-700 font-semibold shadow-lg">
+            ➕ Buat Event
+        </a>
+        {% else %}
+        <div class="text-sm text-gray-500 bg-gray-100 px-4 py-2 rounded-lg">
+            <span class="font-medium">ℹ️ Info:</span> Hanya PIC Divisi & Ketua yang dapat membuat event
+        </div>
+        {% endif %}
+    </div>
+
     <div class="mb-8">
         <h2 class="text-2xl font-bold text-gray-900 mb-4">Event Mendatang</h2>
         <div class="grid gap-6 lg:grid-cols-3">

@@ -1,351 +1,273 @@
-# Media Moklet - Hub Manajemen Terintegrasi
+# 📱 Media Moklet Hub
 
-Platform manajemen terintegrasi untuk Media Moklet yang powerful dan modern dengan Django.
+**Platform manajemen konten dan kolaborasi untuk Media Moklet SMK Telkom Malang**
 
-## 🚀 Fitur Utama
+Media Moklet Hub adalah sistem manajemen konten berbasis web yang dirancang khusus untuk tim Media Moklet. Platform ini memudahkan koordinasi pembuatan konten, penugasan role, tracking progress, dan gamifikasi kontribusi anggota.
 
-### 1. Sistem Autentikasi & Keanggotaan
-- ✅ Model User Custom dengan field Division, Class, NISN, dan Angkatan
-- ✅ Registrasi & Login dengan verifikasi otomatis
-- ✅ Dashboard Profil dengan badge "Verified Member"
-- ✅ Fungsi Edit Profil lengkap
-- ✅ User Groups (Admin, Coordinator, Member) dengan permission berbeda
-- ✅ Halaman Anggota per Angkatan (33, 34, 35, dst)
+![Django](https://img.shields.io/badge/Django-4.2-green)
+![Python](https://img.shields.io/badge/Python-3.13-blue)
+![TailwindCSS](https://img.shields.io/badge/TailwindCSS-3.0-cyan)
+![License](https://img.shields.io/badge/License-MIT-yellow)
 
-### 2. Content Management System (CMS)
-- ✅ Dashboard Kanban untuk perencanaan konten
-- ✅ Form pembuatan konten (Judul, Platform, Jenis, Target Date)
-- ✅ Sistem credit otomatis (Author, Editor, Designer)
-- ✅ Status workflow: Idea → In Progress → Review → Final → Uploaded
-- ✅ Badge platform (Instagram, YouTube, TikTok, Website)
-- ✅ Jenis konten: Motanya, Melapor, Podcast, Bemo, Besmo, IG Story
+## ✨ Fitur Utama
 
-### 3. Gamifikasi
-- ✅ Leaderboard dengan visual ranking
-- ✅ Sistem poin otomatis:
-  - Author: 100 XP
-  - Designer: 100 XP
-  - Editor: 50 XP
-- ✅ Verified Badge untuk member aktif
+### 📋 Content Management System
+- **Content Planning**: Create dan manage content plan dengan detail (judul, platform, tanggal target, deskripsi)
+- **Job Roles System**: Assign specific roles (Cameraman, Video Editor, Caption Writer, etc.) untuk setiap konten
+- **Dynamic Role Claiming**: Member bisa pilih role yang ingin diambil per konten
+- **Progress Tracking**: Status tracking (Idea → In Progress → Review → Final → Uploaded)
+- **Kanban Board**: Visual dashboard untuk melihat semua konten dengan status counting
 
-### 4. Manajemen Event
-- ✅ Kalender event (Upcoming & Past)
-- ✅ Tracking kebutuhan liputan (Foto, Video, Artikel)
-- ✅ Assignment koordinator event
-- ✅ Link dokumentasi
-- ✅ Form pembuatan event baru
+### 👥 Role & Permission System
+- **Badge System**: Assign badges ke user (PIC Divisi, Ketua memo, Waka, Sekretaris, dll)
+- **Role-Based Permissions**:
+  - **PIC Divisi**: Bisa create content dan events
+  - **Ketua**: Bisa create events
+  - **Member**: Bisa claim roles dan berkontribusi
+- **Verification System**: Admin approve member baru sebelum bisa akses penuh
 
-### 5. Divisi
-Sistem divisi baru dengan 3 kategori:
-- **Jurnalistik** - Reporter, penulis artikel
-- **Design** - Desainer grafis, visual creator
-- **Fotografi** - Fotografer, videografer
+### 🏆 Gamification
+- **XP System**: Dapatkan poin berdasarkan kontribusi
+- **Role-Based XP**:
+  - Video Editor: 150 XP
+  - Cameraman: 120 XP
+  - Content Writer: 100 XP
+  - Talent: 100 XP
+  - Thumbnail Designer: 90 XP
+  - Caption Writer: 80 XP
+- **Leaderboard**:
+  - **Global**: Top 50 contributors
+  - **Per Divisi**: Top 20 per divisi (Jurnalistik, Design, Fotografi)
+  - **Per Angkatan**: Top 10 per angkatan
+
+### 📅 Event Management
+- Create dan manage events Media Moklet
+- Dashboard display untuk upcoming events
+- RSVP system
+- Event calendar
+- Participant tracking
+
+### 👤 User Profile
+- Upload foto profil
+- Display badges
+- Show total XP dan ranking
+- Activity history
+- Edit profile info
 
 ## 🛠️ Tech Stack
 
-- **Backend**: Django 5.2
-- **Frontend**: Tailwind CSS + Alpine.js
-- **Database**: SQLite (development) / PostgreSQL (production)
-- **Font**: Google Fonts - Outfit
-- **Color Scheme**: Hijau cerah (Green)
+### Backend
+- **Django 4.2**: Web framework
+- **Python 3.13**: Programming language
+- **SQLite**: Database (development)
+- **Pillow**: Image processing
 
-## 📦 Instalasi & Setup
+### Frontend
+- **TailwindCSS**: UI framework
+- **Alpine.js**: Lightweight JavaScript framework
+- **Google Fonts (Outfit)**: Typography
 
-### 1. Clone & Navigate
+### Features
+- **Authentication**: Django built-in auth
+- **File Upload**: Profile photos support
+- **Middleware**: Custom verification & permission checks
+- **Admin Panel**: Customized Django admin
+
+## 📦 Installation
+
+### Prerequisites
+- Python 3.10+
+- pip
+- Virtual environment (recommended)
+
+### Setup Steps
+
+1. **Clone Repository**
 ```bash
-cd /path/to/media_moklet
+git clone <repository-url>
+cd media_moklet
 ```
 
-### 2. Aktifkan Virtual Environment
+2. **Create Virtual Environment**
 ```bash
-source venv/bin/activate
+python -m venv venv
+source venv/bin/activate  # Linux/Mac
+# venv\Scripts\activate  # Windows
 ```
 
-### 3. Install Dependencies (jika belum)
+3. **Install Dependencies**
 ```bash
-pip install django
+pip install -r requirements.txt
 ```
 
-### 4. Jalankan Migrasi Database
+4. **Run Migrations**
 ```bash
-python manage.py makemigrations
 python manage.py migrate
 ```
 
-### 5. Setup User Groups (Satu kali saja)
-```bash
-python manage.py setup_groups
-```
-
-### 6. Buat Superuser (jika belum ada)
+5. **Create Superuser**
 ```bash
 python manage.py createsuperuser
 ```
 
-### 7. Jalankan Development Server
+6. **Create Predefined Badges**
+```bash
+python manage.py shell < create_badges.py
+```
+
+7. **Run Development Server**
 ```bash
 python manage.py runserver
 ```
 
-Akses di: `http://127.0.0.1:8000/`
+8. **Access Application**
+- Main site: `http://127.0.0.1:8000/`
+- Admin panel: `http://127.0.0.1:8000/admin/`
 
-## 🔑 Default Admin Credentials
+## 📖 Usage Guide
 
-Jika sudah dibuat sebelumnya:
-- **Username**: `admin`
-- **Password**: `admin123`
+### For Members
 
-## 📍 URL Penting
+1. **Register Account**
+   - Buka halaman register
+   - Isi data: username, NISN, kelas, divisi, angkatan
+   - Tunggu admin approve (set `is_verified=True`)
 
-- **Homepage**: `http://127.0.0.1:8000/`
-- **Admin Panel**: `http://127.0.0.1:8000/admin/`
-- **CMS Dashboard**: `http://127.0.0.1:8000/cms/dashboard/`
-- **Leaderboard**: `http://127.0.0.1:8000/auth/leaderboard/`
-- **Events**: `http://127.0.0.1:8000/events/`
-- **Create Event**: `http://127.0.0.1:8000/events/create/`
-- **Create Content**: `http://127.0.0.1:8000/cms/create/`
-- **Edit Profile**: `http://127.0.0.1:8000/auth/profile/edit/`
-- **Angkatan 33**: `http://127.0.0.1:8000/auth/angkatan/33/`
-- **Angkatan 34**: `http://127.0.0.1:8000/auth/angkatan/34/`
+2. **Claim Job Roles**
+   - Lihat job tersedia di menu "Jobs → Job Tersedia"
+   - Klik detail content yang menarik
+   - Pilih role yang ingin diambil
+   - 1 user hanya bisa ambil 1 role per content
 
-## 🎨 Fitur Desain
+3. **Track Progress**
+   - Lihat job yang diambil di "Jobs → Job Saya"
+   - Check status content
+   - Collaborate dengan team
 
-- Navbar glassmorphism dengan efek blur
-- Animasi smooth fade-in
-- Efek hover interaktif
-- Gradient button modern
-- Desain responsive (mobile-first)
-- Color scheme hijau cerah
+4. **Earn XP**
+   - Selesaikan konten
+   - Admin set status ke "Uploaded"
+   - XP otomatis masuk sesuai role
+   - Check ranking di Leaderboard
 
-## 👥 Workflow Manajemen User
+### For PIC Divisi
 
-1. **User mendaftar** → Status: "Pending"
-2. **Admin verifikasi** via Admin Panel
-3. **User dapat "Verified Badge"**
-4. **Admin assign group** (Member/Coordinator/Admin)
-5. **User mendapat permission** sesuai role
+1. **Create Content Plan**
+   - Navigate ke "Content → Create"
+   - Isi informasi content
+   - Tambah job roles yang dibutuhkan:
+     - Pilih role type
+     - Set jumlah orang
+     - Tambah deskripsi (optional)
+   - Submit
 
-## 📊 Workflow Konten
+2. **Manage Content**
+   - Click content card untuk edit
+   - Update status sesuai progress
+   - Add/remove job roles
+   - Monitor assignments
 
-1. Member membuat ide konten
-2. Admin/Coordinator assign tim (Author, Editor, Designer)
-3. Konten bergerak melalui status
-4. Saat di-mark "Uploaded" → XP otomatis diberikan
-5. Leaderboard terupdate otomatis
+3. **Create Events**
+   - Navigate ke "Events → Create Event"
+   - Isi detail event
+   - Set max participants (optional)
 
-## 🔧 Struktur Project
+### For Admin
+
+1. **Verify New Users**
+   - Login ke admin panel
+   - Users → User
+   - Set `is_verified=True` untuk approve
+
+2. **Assign Roles & Badges**
+   - Edit user
+   - Set "Role/Jabatan" (PIC_DIVISI, KETUA, etc.)
+   - Assign badges sesuai kebutuhan
+
+3. **Manage Badges**
+   - Badges → Add badge
+   - Set nama, icon (emoji), warna, deskripsi
+   - Badge bisa di-assign ke banyak user
+
+4. **Monitor Activity**
+   - Check Activity Logs
+   - View all content items
+   - Monitor job assignments
+
+## 📁 Project Structure
 
 ```
 media_moklet/
 ├── config/              # Django settings
-├── core/                # Homepage & base templates
-├── users/               # Authentication & profiles
-│   ├── management/
-│   │   └── commands/
-│   │       └── setup_groups.py
-│   ├── templates/users/
-│   │   ├── login.html
-│   │   ├── register.html
-│   │   ├── profile.html
-│   │   ├── edit_profile.html
-│   │   ├── leaderboard.html
-│   │   └── members_angkatan.html
-│   ├── models.py        # Custom User Model (with angkatan)
-│   ├── forms.py
-│   ├── views.py
-│   └── admin.py         # Admin actions
-├── cms/                 # Content Management
-│   ├── templates/cms/
-│   │   ├── dashboard.html
-│   │   └── create_content.html
-│   ├── models.py        # ContentItem model
-│   ├── signals.py       # Auto-points logic
-│   └── admin.py
-├── events/              # Event Management
-│   ├── templates/events/
-│   │   ├── event_list.html
-│   │   └── create_event.html
-│   ├── models.py
-│   ├── forms.py
-│   └── admin.py
-├── db.sqlite3
-├── manage.py
-└── README.md
+├── core/                # Core app (homepage, base templates)
+├── users/               # User management, auth, profiles
+│   ├── models.py       # User, Badge models
+│   ├── views.py        # Profile, leaderboard
+│   └── templates/      # Profile, leaderboard templates
+├── cms/                 # Content Management System
+│   ├── models.py       # ContentItem, JobRole, JobRoleAssignment
+│   ├── views.py        # Content CRUD, role claiming
+│   └── templates/      # Dashboard, content templates
+├── events/              # Event management
+├── media/               # Uploaded files (profile photos)
+└── manage.py
 ```
 
-## 🎯 Admin Panel - Aksi Bulk
+## 🎯 Key Models
 
-Admin memiliki beberapa **Bulk Actions** untuk mempermudah manajemen:
+### User (users/models.py)
+- Extends Django AbstractUser
+- Fields: role, division, angkatan, profile_photo, badges (M2M), points
+- Methods: `can_create_content()`, `can_create_event()`, `has_role()`
 
-### User Management
-1. **Verify selected users** - Verifikasi member sekaligus
-2. **Remove verification** - Hapus status verifikasi
-3. **Add to Member group** - Tambahkan ke grup Member
-4. **Change division → Jurnalistik** - Ubah divisi ke Jurnalistik
-5. **Change division → Design** - Ubah divisi ke Design
-6. **Change division → Fotografi** - Ubah divisi ke Fotografi
+### Badge (users/models.py)
+- Fields: name, slug, color, icon, description
+- M2M relationship with User
 
-### Cara Menggunakan:
-1. Buka Admin Panel `/admin/`
-2. Pilih **Users**
-3. Centang user yang ingin diubah
-4. Pilih action dari dropdown
-5. Klik **"Go"**
+### ContentItem (cms/models.py)
+- Fields: title, content_type, platform, status, target_date, is_claimable
+- Related: JobRole (1-to-many)
 
-## 📝 Menambah Jenis Konten Baru
+### JobRole (cms/models.py)
+- Fields: role_type, slots_needed, description
+- Related: JobRoleAssignment (1-to-many)
+- Methods: `is_full()`, `get_slots_remaining()`
 
-Untuk menambahkan jenis konten baru:
+### JobRoleAssignment (cms/models.py)
+- ForeignKeys: job_role, user
+- Tracks who claimed which role
 
-1. **Edit file**: `cms/models.py`
-2. Tambahkan di `class Type(models.TextChoices)`:
-   ```python
-   NAMA_BARU = 'NAMA_BARU', 'Display Name'
-   ```
-3. Jalankan migrasi:
-   ```bash
-   python manage.py makemigrations
-   python manage.py migrate
-   ```
+## 🔒 Permissions
 
-## 🔄 Menambah Angkatan Baru
+| Action | Member | PIC Divisi | Ketua | Admin |
+|--------|--------|------------|-------|-------|
+| View Content | ✅ | ✅ | ✅ | ✅ |
+| Create Content | ❌ | ✅ | ❌ | ✅ |
+| Claim Roles | ✅ | ✅ | ✅ | ✅ |
+| Create Events | ❌ | ✅ | ✅ | ✅ |
+| Verify Users | ❌ | ❌ | ❌ | ✅ |
+| Assign Badges | ❌ | ❌ | ❌ | ✅ |
 
-Angkatan ditambahkan otomatis saat:
-- User mendaftar dengan angkatan tertentu
-- Admin mengedit angkatan di Admin Panel
+## 🤝 Contributing
 
-Untuk menampilkan di homepage, edit: `core/templates/core/home.html`
+1. Fork the repository
+2. Create feature branch (`git checkout -b feature/AmazingFeature`)
+3. Commit changes (`git commit -m 'Add some AmazingFeature'`)
+4. Push to branch (`git push origin feature/AmazingFeature`)
+5. Open Pull Request
 
-## 🚀 Pengembangan Selanjutnya
+## 📝 License
 
-### Fitur yang Bisa Ditambahkan:
+This project is licensed under the MIT License.
 
-1. **Notifikasi Real-time**
-   - Gunakan Django Channels untuk WebSocket
-   - Notifikasi saat di-assign task
-   - Notifikasi saat content approved
+## 👨‍💻 Developer
 
-2. **File Upload**
-   - Tambahkan field `FileField` di ContentItem
-   - Konfigurasi `MEDIA_ROOT` dan `MEDIA_URL`
-   - Setup storage (AWS S3/Cloudinary untuk production)
+Developed for **Media Moklet SMK Telkom Malang**
 
-3. **Calendar Widget Dinamis**
-   - Integrasi FullCalendar.js
-   - Tampilkan event dan deadline konten
-   - Drag & drop untuk reschedule
+## 📧 Support
 
-4. **Analytics Dashboard**
-   - Grafik kontribusi per divisi
-   - Trend content type
-   - Member growth chart
-
-5. **Export Report**
-   - Export data content ke Excel
-   - PDF report untuk evaluasi bulanan
-
-6. **Email Notifications**
-   - Setup SMTP di settings.py
-   - Kirim email saat verifikasi
-   - Reminder deadline konten
-
-## 🔐 Keamanan untuk Production
-
-Sebelum deploy ke production:
-
-1. **Environment Variables**
-   ```python
-   # settings.py
-   SECRET_KEY = os.environ.get('SECRET_KEY')
-   DEBUG = False
-   ALLOWED_HOSTS = ['yourdomain.com']
-   ```
-
-2. **Database Production**
-   ```python
-   DATABASES = {
-       'default': {
-           'ENGINE': 'django.db.backends.postgresql',
-           'NAME': 'mediamoklet',
-           'USER': 'dbuser',
-           'PASSWORD': os.environ.get('DB_PASSWORD'),
-           'HOST': 'localhost',
-           'PORT': '5432',
-       }
-   }
-   ```
-
-3. **Static Files**
-   ```bash
-   python manage.py collectstatic
-   ```
-
-4. **HTTPS**
-   - Setup SSL certificate
-   - Konfigurasi SECURE_SSL_REDIRECT
-
-## 🐛 Troubleshooting
-
-### Port 8000 sudah digunakan
-```bash
-# Cari process yang menggunakan port 8000
-lsof -i :8000
-# Kill process
-kill -9 <PID>
-# Atau gunakan port lain
-python manage.py runserver 8001
-```
-
-### Migration Error
-```bash
-# Hapus cache migrasi
-find . -path "*/migrations/*.py" -not -name "__init__.py" -delete
-find . -path "*/migrations/*.pyc" -delete
-# Buat ulang
-python manage.py makemigrations
-python manage.py migrate
-```
-
-### Admin CSS tidak muncul
-```bash
-python manage.py collectstatic --clear
-```
-
-## 📚 Dokumentasi Django
-
-Untuk referensi lebih lanjut:
-- [Django Documentation](https://docs.djangoproject.com/)
-- [Django Admin](https://docs.djangoproject.com/en/5.2/ref/contrib/admin/)
-- [Django Signals](https://docs.djangoproject.com/en/5.2/topics/signals/)
-- [Tailwind CSS](https://tailwindcss.com/docs)
-
-## 👨‍💻 Development Tips
-
-1. **Gunakan Virtual Environment**
-   - Selalu aktifkan venv sebelum coding
-   - Install package di venv, bukan global
-
-2. **Git Version Control**
-   ```bash
-   git add .
-   git commit -m "feat: deskripsi fitur"
-   git push origin main
-   ```
-
-3. **Make Migrations Reguler**
-   - Setiap ubah model → makemigrations
-   - Test di development dulu
-
-4. **Admin Panel sebagai Quick Tool**
-   - Gunakan admin untuk testing cepat
-   - Buat sample data via admin
-
-## 🎓 Kontributor
-
-Website ini dikembangkan untuk Media Moklet SMK Telkom Malang.
+For issues or questions, contact admin Media Moklet.
 
 ---
 
-**Happy Coding! 🚀**
-
-Untuk pertanyaan atau bug report, buka issue di repository atau hubungi tim developer.
-# media-moklet
+**⭐ Star this repo if you find it useful!**

@@ -1,44 +1,55 @@
-<div
-    class="bg-white p-4 rounded-xl shadow-sm border border-gray-100 hover:shadow-lg hover:-translate-y-1 transition-all duration-300 cursor-pointer group">
-    <div class="flex justify-between items-start mb-3">
-        <span class="text-[10px] font-bold uppercase tracking-wider px-2 py-1 rounded-md 
-            {% if item.platform == 'INSTAGRAM' %}bg-pink-50 text-pink-600 border border-pink-100
-            {% elif item.platform == 'YOUTUBE' %}bg-red-50 text-red-600 border border-red-100
-            {% elif item.platform == 'TIKTOK' %}bg-gray-100 text-gray-800 border border-gray-200
-            {% else %}bg-gray-50 text-gray-600 border border-gray-200{% endif %}">
-            {{ item.get_platform_display }}
-        </span>
-        {% if item.target_date %}
-        <span class="text-[10px] font-medium text-gray-400 flex items-center gap-1">
-            <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                    d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"></path>
-            </svg>
-            {{ item.target_date|date:"d M" }}
-        </span>
-        {% endif %}
-    </div>
-    <h4 class="text-sm font-bold text-gray-900 mb-3 leading-snug group-hover:text-primary-600 transition-colors">{{
-        item.title }}</h4>
-    <div class="flex items-center justify-between mt-2 pt-3 border-t border-gray-50">
-        <div class="flex -space-x-2 overflow-hidden">
-            {% if item.author %}
-            <div class="h-6 w-6 rounded-full ring-2 ring-white bg-gradient-to-br from-gray-200 to-gray-300 flex items-center justify-center text-[10px] font-bold text-gray-600 shadow-sm"
-                title="Penulis: {{ item.author.username }}">
-                {{ item.author.username|slice:":1"|upper }}
-            </div>
-            {% endif %}
-            {% if item.designer %}
-            <div class="h-6 w-6 rounded-full ring-2 ring-white bg-gradient-to-br from-blue-200 to-blue-300 flex items-center justify-center text-[10px] font-bold text-blue-600 shadow-sm"
-                title="Desainer: {{ item.designer.username }}">
-                {{ item.designer.username|slice:":1"|upper }}
-            </div>
-            {% endif %}
-            {% if not item.author and not item.designer %}
-            <span class="text-[10px] text-gray-400 italic">Unassigned</span>
+<a href="{% if user.is_staff %}{% url 'edit_content' item.id %}{% else %}{% url 'content_detail' item.id %}{% endif %}"
+    class="block">
+    <div
+        class="bg-white p-4 rounded-xl shadow-sm border border-gray-100 hover:shadow-lg hover:-translate-y-1 transition-all duration-300 cursor-pointer group">
+        <div class="flex justify-between items-start mb-3">
+            <span class="text-[10px] font-bold uppercase tracking-wider px-2 py-1 rounded-md 
+                {% if item.platform == 'INSTAGRAM' %}bg-pink-50 text-pink-600 border border-pink-100
+                {% elif item.platform == 'YOUTUBE' %}bg-red-50 text-red-600 border border-red-100
+                {% elif item.platform == 'TIKTOK' %}bg-gray-100 text-gray-800 border border-gray-200
+                {% else %}bg-gray-50 text-gray-600 border border-gray-200{% endif %}">
+                {{ item.get_platform_display }}
+            </span>
+            {% if item.target_date %}
+            <span class="text-[10px] font-medium text-gray-400 flex items-center gap-1">
+                <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                        d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 0 002-2V7a2 0 00-2-2H5a2 0 00-2 2v12a2 0 002 2z">
+                    </path>
+                </svg>
+                {{ item.target_date|date:"d M" }}
+            </span>
             {% endif %}
         </div>
-        <span class="text-[10px] font-medium text-gray-400 bg-gray-50 px-2 py-0.5 rounded-full">{{
-            item.get_content_type_display }}</span>
+
+        <h4 class="text-sm font-bold text-gray-900 mb-3 leading-snug group-hover:text-primary-600 transition-colors">
+            {{ item.title }}
+        </h4>
+
+        <div class="flex items-center justify-between mt-2 pt-3 border-t border-gray-50">
+            <div class="flex -space-x-2 overflow-hidden">
+                {% if item.author %}
+                <div class="h-6 w-6 rounded-full ring-2 ring-white bg-gradient-to-br from-gray-200 to-gray-300 flex items-center justify-center text-[10px] font-bold text-gray-600 shadow-sm"
+                    title="Penulis: {{ item.author.username }}">
+                    {{ item.author.username|slice:":1"|upper }}
+                </div>
+                {% endif %}
+                {% if item.designer %}
+                <div class="h-6 w-6 rounded-full ring-2 ring-white bg-gradient-to-br from-blue-200 to-blue-300 flex items-center justify-center text-[10px] font-bold text-blue-600 shadow-sm"
+                    title="Desainer: {{ item.designer.username }}">
+                    {{ item.designer.username|slice:":1"|upper }}
+                </div>
+                {% endif %}
+                {% if not item.author and not item.designer %}
+                <span class="text-[10px] text-gray-400 italic">Unassigned</span>
+                {% endif %}
+            </div>
+            <span class="text-[10px] font-medium text-gray-400 bg-gray-50 px-2 py-0.5 rounded-full">{{
+                item.get_content_type_display }}</span>
+        </div>
+
+        {% if user.is_staff %}
+        <div class="mt-2 text-xs text-green-600 font-semibold">✏️ Klik untuk Edit</div>
+        {% endif %}
     </div>
-</div>
+</a>

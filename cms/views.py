@@ -137,39 +137,25 @@ def update_content_status(request, content_id):
     return JsonResponse({'success': False})
 
 @login_required
-def dashboard(request):
-    # Get all content items ordered by target date
-    contents = ContentItem.objects.all().prefetch_related('job_roles__assignments').order_by('target_date')
+@login_required
+def cms_dashboard(request):
+    """Kanban view for content planning"""
+    # Base query
+    contents = ContentItem.objects.all()
     
     # Search functionality
     search_query = request.GET.get('search', '')
     if search_query:
         contents = contents.filter(
-            Q(title__icontains=search_query) |
-            Q(description__icontains=search_query)
+            Q(title__icontains=search_query) | Q(description__icontains=search_query)
         )
     
-    # Filter by status
-    status_filter = request.GET.get('status', '')
-    if status_filter:
-        contents = contents.filter(status=status_filter)
-    
-    # Simple grouping by status for Kanban-like view
-    ideas = contents.filter(status=Status.IDEA)
-    in_progress = contents.filter(status=Status.IN_PROGRESS)
-    review = contents.filter(status=Status.REVIEW)
-    final = contents.filter(status=Status.FINAL)
-    uploaded = contents.filter(status=Status.UPLOADED)
-    
-    context = {
-        'ideas': ideas,
-        'in_progress': in_progress,
-        'review': review,
-        'final': final,
-        'uploaded': uploaded,
-        'search_query': search_query,
-    }
-    return render(request, 'cms/dashboard.html', context)
+    # Get all content items grouped by status (filtered by search if applicable)
+    idea_items = contents.filter(status=Status.IDEA).order_by('-created_at')
+    in_progress_items = contents.filter(status=Status.IN_PROGRESS).order_by('-created_at')
+    review_items = contents.filter(status=Status.REVIEW).order_by('-created_at')
+    final_items = contents.filter(status=Status.FINAL).order_by('-created_at')
+    uploaded_items = contents.filter(status=Status.UPLOADED).order_by('-created_at')
 
 @login_required
 def available_jobs(request):
