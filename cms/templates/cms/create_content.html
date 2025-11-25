@@ -1,0 +1,180 @@
+{% extends 'core/base.html' %}
+
+{% block content %}
+<div class="max-w-4xl mx-auto py-12 px-4 sm:px-6 lg:px-8">
+    <div class="bg-white shadow-xl rounded-2xl overflow-hidden border border-gray-100">
+        <div class="bg-gradient-to-r from-green-600 to-emerald-600 px-6 py-4">
+            <h2 class="text-xl font-bold text-white">
+                {% if is_edit %}
+                ✏️ Edit Konten: {{ content.title }}
+                {% else %}
+                ➕ Buat Konten Baru
+                {% endif %}
+            </h2>
+            <p class="text-green-100 text-sm">Isi form dan tentukan job roles yang dibutuhkan</p>
+        </div>
+
+        <div class="p-8">
+            <form method="POST" class="space-y-6">
+                {% csrf_token %}
+
+                <h3 class="text-lg font-bold text-gray-900 border-b pb-2">📝 Informasi Konten</h3>
+
+                {% for field in form %}
+                <div>
+                    <label for="{{ field.id_for_label }}" class="block text-sm font-medium text-gray-700 mb-1">
+                        {{ field.label }}
+                        {% if field.field.required %}<span class="text-red-500">*</span>{% endif %}
+                    </label>
+                    {{ field }}
+                    {% if field.help_text %}
+                    <p class="mt-1 text-xs text-gray-500">{{ field.help_text }}</p>
+                    {% endif %}
+                    {% for error in field.errors %}
+                    <p class="mt-1 text-xs text-red-600">{{ error }}</p>
+                    {% endfor %}
+                </div>
+                {% endfor %}
+
+                <h3 class="text-lg font-bold text-gray-900 border-b pb-2 mt-8">👥 Job Roles yang Dibutuhkan</h3>
+                <p class="text-sm text-gray-500 mb-4">Tambahkan role yang diperlukan untuk konten ini</p>
+
+                <div id="job-roles-container">
+                    {{ formset.management_form }}
+                    <div id="job-role-forms">
+                        {% for form in formset %}
+                        <div class="job-role-form p-4 bg-gray-50 rounded-xl mb-3 border border-gray-200">
+                            <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                                {% for field in form %}
+                                {% if field.name != 'DELETE' and field.name != 'id' and field.name != 'content' %}
+                                <div>
+                                    <label class="block text-xs font-medium text-gray-700 mb-1">{{ field.label
+                                        }}</label>
+                                    {{ field }}
+                                    {% for error in field.errors %}
+                                    <p class="mt-1 text-xs text-red-600">{{ error }}</p>
+                                    {% endfor %}
+                                </div>
+                                {% endif %}
+                                {% endfor %}
+                            </div>
+                            {% if formset.can_delete %}
+                            <div class="mt-3 flex items-center gap-2">
+                                {{ form.DELETE }}
+                                <label class="text-xs text-red-600 cursor-pointer flex items-center gap-1">
+                                    <span class="font-semibold">Hapus role ini</span>
+                                </label>
+                            </div>
+                            {% endif %}
+                        </div>
+                        {% endfor %}
+                    </div>
+
+                    <button type="button" id="add-job-role"
+                        class="w-full py-3 px-4 border-2 border-dashed border-green-300 rounded-xl text-green-600 hover:bg-green-50 font-medium transition-all flex items-center justify-center gap-2">
+                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                d="M12 6v6m0 0v6m0-6h6m-6 0H6"></path>
+                        </svg>
+                        Tambah Job Role
+                    </button>
+                </div>
+
+                <div class="pt-4 flex justify-between items-center">
+                    <a href="{% if is_edit %}{% url 'content_detail' content.id %}{% else %}{% url 'cms_dashboard' %}{% endif %}"
+                        class="px-4 py-2 border border-gray-300 rounded-lg text-gray-700 hover:bg-gray-50 font-medium transition-colors">
+                        Batal
+                    </a>
+                    <button type="submit"
+                        class="px-6 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 font-medium shadow-lg shadow-green-500/30 transition-all hover:-translate-y-0.5">
+                        {% if is_edit %}💾 Update Konten{% else %}✨ Buat Konten{% endif %}
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<script>
+    // Apply Tailwind classes to form fields
+    document.querySelectorAll('input:not([type="checkbox"]), select, textarea').forEach(element => {
+        element.classList.add('appearance-none', 'block', 'w-full', 'px-4', 'py-3', 'border', 'border-gray-300', 'rounded-xl', 'shadow-sm', 'placeholder-gray-400', 'focus:outline-none', 'focus:ring-2', 'focus:ring-green-500', 'focus:border-green-500', 'sm:text-sm', 'transition-shadow');
+    });
+
+    // Style checkboxes
+    document.querySelectorAll('input[type="checkbox"]').forEach(element => {
+        element.classList.add('w-4', 'h-4', 'text-green-600', 'border-gray-300', 'rounded', 'focus:ring-green-500');
+    });
+
+    // Dynamic formset management
+    const addButton = document.getElementById('add-job-role');
+    const container = document.getElementById('job-role-forms');
+    const totalForms = document.querySelector('input[name="job_roles-TOTAL_FORMS"]');
+
+    if (addButton && container && totalForms) {
+        addButton.addEventListener('click', function () {
+            const formCount = parseInt(totalForms.value);
+            // Clone the last form if available, otherwise create a dummy one to clone
+            const lastForm = container.children.length > 0 ? container.children[container.children.length - 1] : null;
+            let newForm;
+
+            if (lastForm) {
+                newForm = lastForm.cloneNode(true);
+            } else {
+                // If no forms exist, create a basic structure to clone
+                newForm = document.createElement('div');
+                newForm.className = 'job-role-form p-4 bg-gray-50 rounded-xl mb-3 border border-gray-200';
+                newForm.innerHTML = `
+                    <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                        <div>
+                            <label class="block text-xs font-medium text-gray-700 mb-1">Role</label>
+                            <input type="text" name="job_roles-${formCount}-role" id="id_job_roles-${formCount}-role" required>
+                        </div>
+                        <div>
+                            <label class="block text-xs font-medium text-gray-700 mb-1">Jumlah</label>
+                            <input type="number" name="job_roles-${formCount}-quantity" id="id_job_roles-${formCount}-quantity" required>
+                        </div>
+                        <div>
+                            <label class="block text-xs font-medium text-gray-700 mb-1">Gaji</label>
+                            <input type="number" name="job_roles-${formCount}-salary" id="id_job_roles-${formCount}-salary" required>
+                        </div>
+                    </div>
+                    <div class="mt-3 flex items-center gap-2">
+                        <input type="checkbox" name="job_roles-${formCount}-DELETE" id="id_job_roles-${formCount}-DELETE">
+                        <label class="text-xs text-red-600 cursor-pointer flex items-center gap-1">
+                            <span class="font-semibold">Hapus role ini</span>
+                        </label>
+                    </div>
+                `;
+            }
+
+            // Update form index
+            newForm.innerHTML = newForm.innerHTML.replace(
+                /job_roles-\d+-/g,
+                `job_roles-${formCount}-`
+            );
+
+            // Clear values and uncheck DELETE checkbox
+            newForm.querySelectorAll('input, select, textarea').forEach(field => {
+                if (field.type === 'checkbox') {
+                    field.checked = false;
+                } else if (field.name && !field.name.includes('TOTAL_FORMS') && !field.name.includes('INITIAL_FORMS')) {
+                    field.value = '';
+                }
+            });
+
+            // Add styling
+            newForm.querySelectorAll('input:not([type="checkbox"]), select, textarea').forEach(element => {
+                element.classList.add('appearance-none', 'block', 'w-full', 'px-4', 'py-3', 'border', 'border-gray-300', 'rounded-xl', 'shadow-sm', 'placeholder-gray-400', 'focus:outline-none', 'focus:ring-2', 'focus:ring-green-500', 'focus:border-green-500', 'sm:text-sm', 'transition-shadow');
+            });
+
+            newForm.querySelectorAll('input[type="checkbox"]').forEach(element => {
+                element.classList.add('w-4', 'h-4', 'text-green-600', 'border-gray-300', 'rounded', 'focus:ring-green-500');
+            });
+
+            container.appendChild(newForm);
+            totalForms.value = formCount + 1;
+        });
+    }
+</script>
+{% endblock %}

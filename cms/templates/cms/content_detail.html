@@ -1,0 +1,199 @@
+{% extends 'core/base.html' %}
+
+{% block content %}
+<div class="max-w-4xl mx-auto">
+    <div class="bg-white rounded-2xl shadow-lg border border-gray-100 overflow-hidden mb-6">
+        <!-- Header -->
+        <div class="bg-gradient-to-r from-green-500 to-emerald-600 p-6 text-white">
+            <div class="flex items-center gap-2 mb-3">
+                <span class="px-3 py-1 bg-white bg-opacity-20 backdrop-blur-sm rounded-lg text-sm font-semibold">
+                    {{ content.get_platform_display }}
+                </span>
+                <span class="px-3 py-1 bg-white bg-opacity-20 backdrop-blur-sm rounded-lg text-sm font-semibold">
+                    {{ content.get_status_display }}
+                </span>
+                {% if content.is_claimable %}
+                <span class="px-3 py-1 bg-yellow-500 bg-opacity-90 rounded-lg text-sm font-semibold">
+                    🔓 Bisa Diambil
+                </span>
+                {% endif %}
+            </div>
+            <h1 class="text-3xl font-bold mb-2">{{ content.title }}</h1>
+            <p class="text-green-100">{{ content.get_content_type_display }}</p>
+
+            {% if user.is_staff or content.author == user %}
+            <div class="flex gap-2 mt-4">
+                <a href="{% url 'edit_content' content.id %}"
+                    class="px-4 py-2 bg-white bg-opacity-20 backdrop-blur-sm rounded-lg text-sm font-medium hover:bg-opacity-30 transition-all">
+                    ✏️ Edit
+                </a>
+                {% if user.is_staff %}
+                <a href="{% url 'delete_content' content.id %}"
+                    class="px-4 py-2 bg-red-600 bg-opacity-80 backdrop-blur-sm rounded-lg text-sm font-medium hover:bg-opacity-100 transition-all">
+                    🗑️ Hapus
+                </a>
+                {% endif %}
+            </div>
+            {% endif %}
+        </div>
+
+        <!-- Content Info -->
+        <div class="p-6">
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
+                {% if content.target_date %}
+                <div class="flex items-center gap-3">
+                    <div class="w-10 h-10 bg-blue-100 rounded-lg flex items-center justify-center text-blue-600">
+                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z">
+                            </path>
+                        </svg>
+                    </div>
+                    <div>
+                        <p class="text-xs text-gray-500">Target Date</p>
+                        <p class="font-semibold text-gray-900">{{ content.target_date|date:"d M Y" }}</p>
+                    </div>
+                </div>
+                {% endif %}
+
+                {% if content.author %}
+                <div class="flex items-center gap-3">
+                    <div class="w-10 h-10 bg-green-100 rounded-lg flex items-center justify-center text-green-600">
+                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"></path>
+                        </svg>
+                    </div>
+                    <div>
+                        <p class="text-xs text-gray-500">Dibuat Oleh</p>
+                        <p class="font-semibold text-gray-900">{{ content.author.username }}</p>
+                    </div>
+                </div>
+                {% endif %}
+            </div>
+
+            {% if content.description %}
+            <div class="mb-6">
+                <h3 class="font-bold text-gray-900 mb-2">Deskripsi</h3>
+                <p class="text-gray-600">{{ content.description }}</p>
+            </div>
+            {% endif %}
+        </div>
+    </div>
+
+    <!-- Job Roles Section -->
+    {% if job_roles %}
+    <div class="bg-white rounded-2xl shadow-lg border border-gray-100 p-6 mb-6">
+        <h2 class="text-2xl font-bold text-gray-900 mb-6">👥 Job Roles yang Dibutuhkan</h2>
+
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+            {% for role in job_roles %}
+            <div
+                class="border border-gray-200 rounded-xl p-4 {% if role.is_full %}bg-gray-50{% else %}bg-green-50 border-green-200{% endif %}">
+                <div class="flex justify-between items-start mb-3">
+                    <div>
+                        <h3 class="font-bold text-gray-900 text-lg">{{ role.get_role_type_display }}</h3>
+                        {% if role.description %}
+                        <p class="text-sm text-gray-600 mt-1">{{ role.description }}</p>
+                        {% endif %}
+                    </div>
+                    <span
+                        class="px-2 py-1 bg-white rounded-lg text-xs font-semibold {% if role.is_full %}text-gray-600{% else %}text-green-600{% endif %}">
+                        {{ role.get_assigned_count }}/{{ role.slots_needed }}
+                    </span>
+                </div>
+
+                <!-- Assigned Members -->
+                {% if role.assignments.all %}
+                <div class="mb-3">
+                    <p class="text-xs text-gray-500 mb-2">Yang sudah mengambil:</p>
+                    <div class="flex flex-wrap gap-2">
+                        {% for assignment in role.assignments.all %}
+                        <div
+                            class="flex items-center gap-2 bg-white rounded-lg px-3 py-1 text-sm border border-gray-200">
+                            <span
+                                class="w-6 h-6 bg-green-600 rounded-full flex items-center justify-center text-white text-xs font-bold">
+                                {{ assignment.user.username|slice:":1"|upper }}
+                            </span>
+                            <span>{{ assignment.user.username }}</span>
+                            {% if assignment.user == user %}
+                            <a href="{% url 'unclaim_role' assignment.id %}"
+                                onclick="return confirm('Yakin ingin melepas role ini?')"
+                                class="text-red-600 hover:text-red-700 ml-1">
+                                ✕
+                            </a>
+                            {% endif %}
+                        </div>
+                        {% endfor %}
+                    </div>
+                </div>
+                {% endif %}
+
+                <!-- Claim Button -->
+                {% if not role.is_full and role.id not in user_assignments and content.is_claimable %}
+                <a href="{% url 'claim_role' role.id %}"
+                    class="block w-full text-center px-4 py-2 bg-green-600 text-white rounded-lg font-medium hover:bg-green-700 shadow-lg shadow-green-500/30 transition-all hover:-translate-y-0.5">
+                    ✋ Ambil Role Ini
+                </a>
+                {% elif role.id in user_assignments %}
+                <div class="block w-full text-center px-4 py-2 bg-blue-600 text-white rounded-lg font-medium">
+                    ✅ Anda sudah mengambil role ini
+                </div>
+                {% elif role.is_full %}
+                <div
+                    class="block w-full text-center px-4 py-2 bg-gray-400 text-white rounded-lg font-medium cursor-not-allowed">
+                    🔒 Role Penuh
+                </div>
+                {% endif %}
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+    {% endif %}
+
+    <!-- Comments Section -->
+    <div class="bg-white rounded-2xl shadow-lg border border-gray-100 p-6">
+        <h2 class="text-2xl font-bold text-gray-900 mb-6">💬 Diskusi</h2>
+
+        <!-- Comment Form -->
+        <form method="POST" class="mb-6">
+            {% csrf_token %}
+            <div class="mb-3">
+                {{ form.message }}
+            </div>
+            <button type="submit"
+                class="px-6 py-2 bg-green-600 text-white rounded-xl font-medium hover:bg-green-700 shadow-lg shadow-green-500/30 transition-all hover:-translate-y-0.5">
+                Kirim Komentar
+            </button>
+        </form>
+
+        <!-- Comments List -->
+        <div class="space-y-4">
+            {% for comment in comments %}
+            <div class="flex gap-4 p-4 bg-gray-50 rounded-xl">
+                <div
+                    class="flex-shrink-0 w-10 h-10 bg-green-600 rounded-full flex items-center justify-center text-white font-bold">
+                    {{ comment.user.username|slice:":1"|upper }}
+                </div>
+                <div class="flex-1">
+                    <div class="flex items-center gap-2 mb-1">
+                        <span class="font-bold text-gray-900">{{ comment.user.username }}</span>
+                        <span class="text-xs text-gray-500">{{ comment.created_at|date:"d M Y, H:i" }}</span>
+                    </div>
+                    <p class="text-gray-700">{{ comment.message }}</p>
+                </div>
+            </div>
+            {% empty %}
+            <div class="text-center py-8 text-gray-500">
+                Belum ada komentar. Mulai diskusi!
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+</div>
+
+<script>
+    // Style comment textarea
+    document.querySelector('textarea[name="message"]').classList.add('w-full', 'px-4', 'py-3', 'border', 'border-gray-300', 'rounded-xl', 'shadow-sm', 'focus:outline-none', 'focus:ring-2', 'focus:ring-green-500', 'focus:border-green-500');
+</script>
+{% endblock %}

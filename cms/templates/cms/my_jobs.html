@@ -1,0 +1,112 @@
+{% extends 'core/base.html' %}
+
+{% block content %}
+<div class="max-w-6xl mx-auto">
+    <div class="mb-8 animate-fade-in-up">
+        <h1 class="text-3xl font-bold text-gray-900 mb-2">📋 Job Saya</h1>
+        <p class="text-gray-500">Job yang sedang kamu kerjakan</p>
+    </div>
+
+    {% if assignments %}
+    <div class="grid grid-cols-1 gap-6">
+        {% for assignment in assignments %}
+        <div
+            class="bg-white rounded-2xl shadow-sm border border-gray-100 p-6 hover:shadow-lg transition-shadow animate-fade-in-up">
+            <div class="flex justify-between items-start mb-4">
+                <div class="flex-1">
+                    <div class="flex items-center gap-2 mb-2">
+                        <span
+                            class="px-3 py-1 bg-green-100 text-green-700 border border-green-200 rounded-lg text-xs font-bold">
+                            {{ assignment.job_role.get_role_type_display }}
+                        </span>
+                        <span class="text-[10px] font-medium px-2 py-1 rounded-md 
+                            {% if assignment.job_role.content.platform == 'INSTAGRAM' %}bg-pink-50 text-pink-600
+                            {% elif assignment.job_role.content.platform == 'YOUTUBE' %}bg-red-50 text-red-600
+                            {% elif assignment.job_role.content.platform == 'TIKTOK' %}bg-gray-100 text-gray-800
+                            {% else %}bg-gray-50 text-gray-600{% endif %}">
+                            {{ assignment.job_role.content.get_platform_display }}
+                        </span>
+                        <span class="px-2 py-1 rounded-md text-xs font-medium
+                            {% if assignment.job_role.content.status == 'IDEA' %}bg-gray-100 text-gray-700
+                            {% elif assignment.job_role.content.status == 'IN_PROGRESS' %}bg-blue-100 text-blue-700
+                            {% elif assignment.job_role.content.status == 'REVIEW' %}bg-amber-100 text-amber-700
+                            {% elif assignment.job_role.content.status == 'FINAL' %}bg-purple-100 text-purple-700
+                            {% elif assignment.job_role.content.status == 'UPLOADED' %}bg-green-100 text-green-700
+                            {% endif %}">
+                            {{ assignment.job_role.content.get_status_display }}
+                        </span>
+                    </div>
+                    <h3 class="text-xl font-bold text-gray-900 mb-2">{{ assignment.job_role.content.title }}</h3>
+                    {% if assignment.job_role.description %}
+                    <p class="text-sm text-gray-500 mb-3">
+                        <span class="font-semibold">Note:</span> {{ assignment.job_role.description }}
+                    </p>
+                    {% endif %}
+                </div>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-4 text-sm">
+                {% if assignment.job_role.content.target_date %}
+                <div class="flex items-center gap-2 text-gray-600">
+                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                            d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z">
+                        </path>
+                    </svg>
+                    <span>Target: {{ assignment.job_role.content.target_date|date:"d M Y" }}</span>
+                </div>
+                {% endif %}
+                <div class="flex items-center gap-2 text-gray-600">
+                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                            d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                    </svg>
+                    <span>Diambil: {{ assignment.assigned_at|date:"d M, H:i" }}</span>
+                </div>
+                <div class="flex items-center gap-2 text-gray-600">
+                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                            d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z">
+                        </path>
+                    </svg>
+                    <span class="font-semibold text-green-600">Est. XP:
+                        {% if assignment.job_role.role_type == 'CAMERAMAN' %}120
+                        {% elif assignment.job_role.role_type == 'VIDEO_EDITOR' %}150
+                        {% elif assignment.job_role.role_type == 'CONTENT_WRITER' %}100
+                        {% elif assignment.job_role.role_type == 'THUMBNAIL_DESIGNER' %}90
+                        {% elif assignment.job_role.role_type == 'CAPTION_WRITER' %}80
+                        {% elif assignment.job_role.role_type == 'TALENT' %}100
+                        {% endif %} XP
+                    </span>
+                </div>
+            </div>
+
+            <div class="flex gap-3">
+                <a href="{% url 'content_detail' assignment.job_role.content.id %}"
+                    class="flex-1 text-center px-4 py-2 bg-blue-600 text-white rounded-xl font-medium hover:bg-blue-700 transition-colors">
+                    📝 Lihat Detail
+                </a>
+                {% if assignment.job_role.content.status != 'UPLOADED' %}
+                <a href="{% url 'unclaim_role' assignment.id %}"
+                    onclick="return confirm('Yakin ingin melepas role ini?')"
+                    class="px-4 py-2 bg-red-50 text-red-600 border border-red-200 rounded-xl font-medium hover:bg-red-100 transition-colors">
+                    ❌ Lepas Role
+                </a>
+                {% endif %}
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+    {% else %}
+    <div class="text-center py-16 bg-white rounded-2xl shadow-sm border border-gray-100">
+        <div class="text-6xl mb-4">🎯</div>
+        <h3 class="text-xl font-bold text-gray-900 mb-2">Belum ada job yang diambil</h3>
+        <p class="text-gray-500 mb-6">Ambil role untuk mulai berkontribusi!</p>
+        <a href="{% url 'available_jobs' %}"
+            class="inline-block px-6 py-3 bg-green-600 text-white rounded-xl font-medium hover:bg-green-700 shadow-lg shadow-green-500/30 transition-all hover:-translate-y-0.5">
+            Lihat Job Tersedia
+        </a>
+    </div>
+    {% endif %}
+</div>
+{% endblock %}

@@ -1,0 +1,55 @@
+{% extends 'core/base.html' %}
+
+{% block content %}
+<div class="max-w-4xl mx-auto">
+    <div class="text-center mb-12 animate-fade-in-up">
+        <h1 class="text-3xl font-bold text-gray-900 mb-4">🏆 Hall of Fame</h1>
+        <p class="text-gray-500">Anggota paling berkontribusi di Media Moklet.</p>
+    </div>
+
+    <div class="bg-white rounded-2xl shadow-xl border border-gray-100 overflow-hidden animate-fade-in-up delay-100">
+        <div class="p-6 bg-gradient-to-r from-primary-600 to-purple-600">
+            <div class="flex justify-between items-center text-white">
+                <span class="font-bold text-lg">Rank</span>
+                <span class="font-bold text-lg">Member</span>
+                <span class="font-bold text-lg">XP Points</span>
+            </div>
+        </div>
+        <div class="divide-y divide-gray-100">
+            {% for user in top_users %}
+            <div class="p-6 flex items-center justify-between hover:bg-gray-50 transition-colors">
+                <div class="flex items-center gap-6">
+                    <div
+                        class="w-8 h-8 flex items-center justify-center font-bold text-xl 
+                        {% if forloop.counter == 1 %}text-yellow-500 text-3xl{% elif forloop.counter == 2 %}text-gray-400 text-2xl{% elif forloop.counter == 3 %}text-amber-600 text-2xl{% else %}text-gray-400{% endif %}">
+                        #{{ forloop.counter }}
+                    </div>
+                    <div class="flex items-center gap-4">
+                        <div
+                            class="w-12 h-12 rounded-full bg-gray-200 flex items-center justify-center text-gray-600 font-bold text-lg ring-2 ring-white shadow-md">
+                            {{ user.username|slice:":1"|upper }}
+                        </div>
+                        <div>
+                            <h3 class="font-bold text-gray-900 flex items-center gap-2">
+                                {{ user.get_full_name|default:user.username }}
+                                {% if user.is_verified %}
+                                <svg class="w-4 h-4 text-blue-500" fill="currentColor" viewBox="0 0 20 20">
+                                    <path fill-rule="evenodd"
+                                        d="M6.267 3.455a3.066 3.066 0 001.745-.723 3.066 3.066 0 013.976 0 3.066 3.066 0 001.745.723 3.066 3.066 0 012.812 2.812c.051.643.304 1.254.723 1.745a3.066 3.066 0 010 3.976 3.066 3.066 0 00-.723 1.745 3.066 3.066 0 01-2.812 2.812 3.066 3.066 0 00-1.745.723 3.066 3.066 0 01-3.976 0 3.066 3.066 0 00-1.745-.723 3.066 3.066 0 01-2.812-2.812 3.066 3.066 0 00-.723-1.745 3.066 3.066 0 010-3.976 3.066 3.066 0 00.723-1.745 3.066 3.066 0 012.812-2.812zm7.44 5.252a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z"
+                                        clip-rule="evenodd"></path>
+                                </svg>
+                                {% endif %}
+                            </h3>
+                            <p class="text-sm text-gray-500">{{ user.get_division_display }}</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="font-bold text-primary-600 text-xl">
+                    {{ user.points }} XP
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+</div>
+{% endblock %}

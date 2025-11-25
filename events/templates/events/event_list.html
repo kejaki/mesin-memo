@@ -1,0 +1,80 @@
+{% extends 'core/base.html' %}
+
+{% block content %}
+<div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+    <div class="mb-8">
+        <h2 class="text-2xl font-bold text-gray-900 mb-4">Event Mendatang</h2>
+        <div class="grid gap-6 lg:grid-cols-3">
+            {% for event in upcoming_events %}
+            <div class="bg-white overflow-hidden shadow rounded-lg">
+                <div class="px-4 py-5 sm:p-6">
+                    <div class="flex items-center justify-between mb-2">
+                        <span class="text-sm font-medium text-red-600">{{ event.date|date:"d M Y, H:i" }}</span>
+                    </div>
+                    <h3 class="text-lg font-medium text-gray-900">{{ event.title }}</h3>
+                    <p class="mt-1 text-sm text-gray-500">{{ event.location }}</p>
+                    <p class="mt-3 text-sm text-gray-600">{{ event.description|truncatewords:20 }}</p>
+                    <div class="mt-4">
+                        <h4 class="text-xs font-semibold text-gray-500 uppercase tracking-wider">Kebutuhan Liputan</h4>
+                        <div class="mt-2 flex space-x-2">
+                            {% if event.needs_photo %}
+                            <span
+                                class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-blue-100 text-blue-800">Foto</span>
+                            {% endif %}
+                            {% if event.needs_video %}
+                            <span
+                                class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-pink-100 text-pink-800">Video</span>
+                            {% endif %}
+                            {% if event.needs_article %}
+                            <span
+                                class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-yellow-100 text-yellow-800">Artikel</span>
+                            {% endif %}
+                        </div>
+                    </div>
+                </div>
+            </div>
+            {% empty %}
+            <p class="text-gray-500">Tidak ada event mendatang.</p>
+            {% endfor %}
+        </div>
+    </div>
+
+    <div>
+        <h2 class="text-2xl font-bold text-gray-900 mb-4">Riwayat Event</h2>
+        <div class="bg-white shadow overflow-hidden sm:rounded-md">
+            <ul class="divide-y divide-gray-200">
+                {% for event in past_events %}
+                <li>
+                    <div class="px-4 py-4 sm:px-6">
+                        <div class="flex items-center justify-between">
+                            <p class="text-sm font-medium text-red-600 truncate">{{ event.title }}</p>
+                            <div class="ml-2 flex-shrink-0 flex">
+                                <p
+                                    class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-gray-100 text-gray-800">
+                                    Selesai
+                                </p>
+                            </div>
+                        </div>
+                        <div class="mt-2 sm:flex sm:justify-between">
+                            <div class="sm:flex">
+                                <p class="flex items-center text-sm text-gray-500">
+                                    {{ event.date|date:"d M Y" }}
+                                </p>
+                            </div>
+                            {% if event.documentation_link %}
+                            <div class="mt-2 flex items-center text-sm text-gray-500 sm:mt-0">
+                                <a href="{{ event.documentation_link }}" class="text-red-600 hover:text-red-900"
+                                    target="_blank">Lihat Dokumentasi &rarr;</a>
+                            </div>
+                            {% endif %}
+                        </div>
+                    </div>
+                </li>
+                {% empty %}
+                <li class="px-4 py-4 sm:px-6 text-gray-500">Belum ada riwayat event.</li>
+                {% endfor %}
+            </ul>
+        </div>
+    </div>
+</div>
+{% endblock %}
