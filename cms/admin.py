@@ -1,4 +1,5 @@
 from django.contrib import admin
+from import_export.admin import ImportExportModelAdmin
 from .models import ContentItem, ContentComment, ActivityLog, JobRole, JobRoleAssignment
 
 class JobRoleInline(admin.TabularInline):
@@ -12,7 +13,7 @@ class JobRoleAssignmentInline(admin.TabularInline):
     readonly_fields = ['assigned_at']
 
 @admin.register(ContentItem)
-class ContentItemAdmin(admin.ModelAdmin):
+class ContentItemAdmin(ImportExportModelAdmin):
     list_display = ('title', 'content_type', 'platform', 'status', 'target_date', 'author', 'is_claimable', 'claimed_by')
     list_filter = ('status', 'platform', 'content_type', 'is_claimable')
     search_fields = ('title', 'description')

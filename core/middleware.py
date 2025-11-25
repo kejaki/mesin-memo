@@ -79,3 +79,25 @@ class VerificationMiddleware:
         
         response = self.get_response(request)
         return response
+
+class ErrorLoggingMiddleware:
+    def __init__(self, get_response):
+        self.get_response = get_response
+
+    def __call__(self, request):
+        return self.get_response(request)
+
+    def process_exception(self, request, exception):
+        import traceback
+        from .models import ErrorLog
+        
+        user = str(request.user) if request.user.is_authenticated else 'Anonymous'
+        
+        ErrorLog.objects.create(
+            path=request.path,
+            method=request.method,
+            error_message=str(exception),
+            traceback=traceback.format_exc(),
+            user=user
+        )
+        return None

@@ -31,6 +31,7 @@ ALLOWED_HOSTS = []
 # Application definition
 
 INSTALLED_APPS = [
+    'import_export',
     'jazzmin',
     'django.contrib.admin',
     'django.contrib.auth',
@@ -65,9 +66,12 @@ JAZZMIN_SETTINGS = {
         "users.Badge": "fas fa-medal",
         "cms.ContentItem": "fas fa-newspaper",
         "events.Event": "fas fa-calendar-alt",
+        "core.ErrorLog": "fas fa-exclamation-triangle",
     },
     "default_icon_parents": "fas fa-chevron-circle-right",
     "default_icon_children": "fas fa-circle",
+    "site_logo": None,
+    "site_logo_classes": "text-xl",
 }
 
 JAZZMIN_UI_TWEAKS = {
@@ -84,7 +88,9 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
+    'django.middleware.clickjacking.XFrameOptionsMiddleware',
     'core.middleware.VerificationMiddleware',  # Custom verification middleware
+    'core.middleware.ErrorLoggingMiddleware',  # Error logging
 ]
 
 ROOT_URLCONF = 'config.urls'

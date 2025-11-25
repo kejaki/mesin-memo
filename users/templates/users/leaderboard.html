@@ -54,6 +54,91 @@
 
         <!-- Global Leaderboard -->
         <div x-show="activeTab === 'global'" class="p-6">
+
+            <!-- Podium Section -->
+            <div class="flex justify-center items-end gap-4 mb-12 mt-4">
+                {% if global_leaders|length >= 2 %}
+                <!-- 2nd Place -->
+                <div class="flex flex-col items-center animate-fade-in-up delay-100">
+                    <div class="relative">
+                        {% if global_leaders.1.profile_photo %}
+                        <img src="{{ global_leaders.1.profile_photo.url }}"
+                            class="w-16 h-16 rounded-full object-cover border-4 border-gray-300 shadow-lg">
+                        {% else %}
+                        <div
+                            class="w-16 h-16 rounded-full bg-gray-300 flex items-center justify-center text-white font-bold text-xl border-4 border-gray-200 shadow-lg">
+                            {{ global_leaders.1.get_initials }}
+                        </div>
+                        {% endif %}
+                        <div
+                            class="absolute -bottom-3 left-1/2 transform -translate-x-1/2 bg-gray-300 text-white px-2 py-0.5 rounded-full text-xs font-bold shadow-sm">
+                            2nd</div>
+                    </div>
+                    <div class="mt-4 text-center">
+                        <p class="font-bold text-gray-900 text-sm">{{ global_leaders.1.username }}</p>
+                        <p class="text-green-600 font-bold text-xs">{{ global_leaders.1.points }} XP</p>
+                    </div>
+                    <div class="w-20 h-24 bg-gradient-to-t from-gray-200 to-gray-50 rounded-t-lg mt-2 shadow-inner">
+                    </div>
+                </div>
+                {% endif %}
+
+                {% if global_leaders|length >= 1 %}
+                <!-- 1st Place -->
+                <div class="flex flex-col items-center z-10 animate-fade-in-up">
+                    <div class="relative">
+                        <span class="absolute -top-8 left-1/2 transform -translate-x-1/2 text-3xl">👑</span>
+                        {% if global_leaders.0.profile_photo %}
+                        <img src="{{ global_leaders.0.profile_photo.url }}"
+                            class="w-24 h-24 rounded-full object-cover border-4 border-yellow-400 shadow-xl ring-4 ring-yellow-100">
+                        {% else %}
+                        <div
+                            class="w-24 h-24 rounded-full bg-yellow-400 flex items-center justify-center text-white font-bold text-3xl border-4 border-yellow-300 shadow-xl ring-4 ring-yellow-100">
+                            {{ global_leaders.0.get_initials }}
+                        </div>
+                        {% endif %}
+                        <div
+                            class="absolute -bottom-3 left-1/2 transform -translate-x-1/2 bg-yellow-400 text-white px-3 py-0.5 rounded-full text-sm font-bold shadow-sm">
+                            1st</div>
+                    </div>
+                    <div class="mt-4 text-center">
+                        <p class="font-bold text-gray-900 text-lg">{{ global_leaders.0.username }}</p>
+                        <p class="text-green-600 font-bold">{{ global_leaders.0.points }} XP</p>
+                    </div>
+                    <div
+                        class="w-24 h-32 bg-gradient-to-t from-yellow-200 to-yellow-50 rounded-t-lg mt-2 shadow-inner flex items-end justify-center pb-4">
+                        <span class="text-yellow-700 font-bold text-2xl">1</span>
+                    </div>
+                </div>
+                {% endif %}
+
+                {% if global_leaders|length >= 3 %}
+                <!-- 3rd Place -->
+                <div class="flex flex-col items-center animate-fade-in-up delay-200">
+                    <div class="relative">
+                        {% if global_leaders.2.profile_photo %}
+                        <img src="{{ global_leaders.2.profile_photo.url }}"
+                            class="w-16 h-16 rounded-full object-cover border-4 border-orange-300 shadow-lg">
+                        {% else %}
+                        <div
+                            class="w-16 h-16 rounded-full bg-orange-300 flex items-center justify-center text-white font-bold text-xl border-4 border-orange-200 shadow-lg">
+                            {{ global_leaders.2.get_initials }}
+                        </div>
+                        {% endif %}
+                        <div
+                            class="absolute -bottom-3 left-1/2 transform -translate-x-1/2 bg-orange-300 text-white px-2 py-0.5 rounded-full text-xs font-bold shadow-sm">
+                            3rd</div>
+                    </div>
+                    <div class="mt-4 text-center">
+                        <p class="font-bold text-gray-900 text-sm">{{ global_leaders.2.username }}</p>
+                        <p class="text-green-600 font-bold text-xs">{{ global_leaders.2.points }} XP</p>
+                    </div>
+                    <div class="w-20 h-16 bg-gradient-to-t from-orange-100 to-orange-50 rounded-t-lg mt-2 shadow-inner">
+                    </div>
+                </div>
+                {% endif %}
+            </div>
+
             <div class="space-y-3">
                 {% for user_data in global_leaders %}
                 <div
@@ -145,7 +230,7 @@
                     <div class="flex-1">
                         <p class="font-semibold text-gray-900">{% if user_data.first_name %}{{ user_data.first_name }}
                             {{ user_data.last_name }}{% else %}{{ user_data.username }}{% endif %}</p>
-                        <p class="text-xs text-gray-500">Angkatan {{ user_data.angkatan }}</p>
+                        <p class="text-xs text-gray-500">Angkatan {{ user_data.angkatan|default:"-" }}</p>
                     </div>
                     <div class="text-lg font-bold text-green-600">{{ user_data.points }} XP</div>
                 </div>
@@ -177,7 +262,7 @@
                     <div class="flex-1">
                         <p class="font-semibold text-gray-900">{% if user_data.first_name %}{{ user_data.first_name }}
                             {{ user_data.last_name }}{% else %}{{ user_data.username }}{% endif %}</p>
-                        <p class="text-xs text-gray-500">Angkatan {{ user_data.angkatan }}</p>
+                        <p class="text-xs text-gray-500">Angkatan {{ user_data.angkatan|default:"-" }}</p>
                     </div>
                     <div class="text-lg font-bold text-green-600">{{ user_data.points }} XP</div>
                 </div>
@@ -209,7 +294,7 @@
                     <div class="flex-1">
                         <p class="font-semibold text-gray-900">{% if user_data.first_name %}{{ user_data.first_name }}
                             {{ user_data.last_name }}{% else %}{{ user_data.username }}{% endif %}</p>
-                        <p class="text-xs text-gray-500">Angkatan {{ user_data.angkatan }}</p>
+                        <p class="text-xs text-gray-500">Angkatan {{ user_data.angkatan|default:"-" }}</p>
                     </div>
                     <div class="text-lg font-bold text-green-600">{{ user_data.points }} XP</div>
                 </div>

@@ -1,5 +1,6 @@
 from django.contrib import admin
 from django.contrib.auth.admin import UserAdmin as BaseUserAdmin
+from import_export.admin import ImportExportModelAdmin
 from .models import User, Badge
 
 # Customize admin site header
@@ -9,10 +10,9 @@ admin.site.index_title = "Dashboard Admin"
 
 @admin.register(Badge)
 class BadgeAdmin(admin.ModelAdmin):
-    list_display = ['name', 'icon', 'color', 'user_count']
+    list_display = ('name', 'slug', 'color', 'icon')
+    search_fields = ('name', 'description')
     prepopulated_fields = {'slug': ('name',)}
-    search_fields = ['name', 'description']
-    
     def user_count(self, obj):
         return obj.users.count()
     user_count.short_description = 'Jumlah User'
@@ -24,7 +24,7 @@ class BadgeInline(admin.TabularInline):
     verbose_name_plural = "Badges"
 
 @admin.register(User)
-class UserAdmin(BaseUserAdmin):
+class UserAdmin(BaseUserAdmin, ImportExportModelAdmin):
     list_display = ['username', 'email', 'role', 'division', 'angkatan', 'is_verified', 'points']
     list_filter = ['role', 'division', 'angkatan', 'is_verified', 'is_staff']
     search_fields = ['username', 'email', 'first_name', 'last_name', 'nisn']

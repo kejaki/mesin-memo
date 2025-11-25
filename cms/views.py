@@ -156,6 +156,30 @@ def cms_dashboard(request):
     final_items = contents.filter(status=Status.FINAL).order_by('-created_at')
     uploaded_items = contents.filter(status=Status.UPLOADED).order_by('-created_at')
 
+    # Calendar Data
+    from events.models import Event
+    import json
+    from django.core.serializers.json import DjangoJSONEncoder
+    
+    calendar_events = []
+    
+    # Add Content Items (Target Date)
+    for item in contents.filter(target_date__isnull=False):
+        calendar_events.append({
+            'title': f"📝 {item.title}",
+            'start': item.target_date.isoformat(),
+            'url': f"/cms/content/{item.id}/",
+            'color': '#3B82F6' if item.status != 'UPLOADED' else '#10B981'
+        })
+        
+    # Add Events
+    for event in Event.objects.all():
+        calendar_events.append({
+            'title': f"📅 {event.title}",
+            'start': event.date.isoformat(),
+            'color': '#EF4444'
+        })
+
     context = {
         'contents': contents,
         'search_query': search_query,
@@ -169,6 +193,7 @@ def cms_dashboard(request):
         'review_items': review_items,
         'final_items': final_items,
         'uploaded_items': uploaded_items,
+        'calendar_events_json': json.dumps(calendar_events, cls=DjangoJSONEncoder),
     }
     return render(request, 'cms/dashboard.html', context)
 
@@ -281,15 +306,41 @@ def content_detail(request, content_id):
             comment.content = content
             comment.user = request.user
             comment.save()
+            message = form.cleaned_data['message']
+            comment = ContentComment.objects.create(
+                content=content,
+                user=request.user,
+                message=message
+            )
             
             # Log activity
             ActivityLog.objects.create(
                 user=request.user,
                 action=ActivityLog.Action.COMMENTED,
                 content=content,
+                comment=comment,
                 description=f"Berkomentar di '{content.title}'"
             )
             
+            # Handle Mentions
+            import re
+            from users.models import User
+            from core.models import Notification
+            
+            mentions = re.findall(r'@(\w+)', message)
+            for username in mentions:
+                try:
+                    mentioned_user = User.objects.get(username=username)
+                    if mentioned_user != request.user:
+                        Notification.objects.create(
+                            recipient=mentioned_user,
+                            actor=request.user,
+                            verb="mentioned you in a comment",
+                            target_link=f"/cms/content/{content.id}/"
+                        )
+                except User.DoesNotExist:
+                    pass
+                    
             messages.success(request, 'Komentar berhasil ditambahkan!')
             return redirect('content_detail', content_id=content_id)
     else:
