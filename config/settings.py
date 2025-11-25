@@ -31,6 +31,7 @@ ALLOWED_HOSTS = []
 # Application definition
 
 INSTALLED_APPS = [
+    'jazzmin',
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
@@ -44,6 +45,36 @@ INSTALLED_APPS = [
     'cms',
     'events',
 ]
+
+JAZZMIN_SETTINGS = {
+    "site_title": "Media Moklet",
+    "site_header": "Media Moklet",
+    "site_brand": "Media Moklet",
+    "welcome_sign": "Welcome to Media Moklet Admin",
+    "copyright": "Media Moklet SMK Telkom Malang",
+    "search_model": "users.User",
+    "topmenu_links": [
+        {"name": "Home",  "url": "admin:index", "permissions": ["auth.view_user"]},
+        {"name": "Dashboard", "url": "/cms/dashboard/"},
+    ],
+    "show_sidebar": True,
+    "navigation_expanded": True,
+    "icons": {
+        "auth": "fas fa-users-cog",
+        "users.User": "fas fa-user",
+        "users.Badge": "fas fa-medal",
+        "cms.ContentItem": "fas fa-newspaper",
+        "events.Event": "fas fa-calendar-alt",
+    },
+    "default_icon_parents": "fas fa-chevron-circle-right",
+    "default_icon_children": "fas fa-circle",
+}
+
+JAZZMIN_UI_TWEAKS = {
+    "theme": "simplex",
+    "dark_mode_theme": "darkly",
+    "sidebar_fixed": False,
+}
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',

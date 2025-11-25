@@ -52,20 +52,26 @@
                 Jadwal Mendatang
             </h2>
             <div class="space-y-3" id="upcoming-schedule">
-                <!-- Will be populated dynamically or via template -->
+                {% for event in upcoming_events %}
                 <div
                     class="flex items-center gap-4 p-4 bg-green-50 border border-green-100 rounded-xl hover:shadow-md transition-shadow">
                     <div
                         class="flex-shrink-0 w-12 h-12 bg-green-600 rounded-lg flex flex-col items-center justify-center text-white">
-                        <span class="text-lg font-bold">25</span>
-                        <span class="text-xs">Nov</span>
+                        <span class="text-lg font-bold">{{ event.date|date:"d" }}</span>
+                        <span class="text-xs">{{ event.date|date:"M" }}</span>
                     </div>
                     <div class="flex-1">
-                        <h3 class="font-bold text-gray-900">Example Event</h3>
-                        <p class="text-sm text-gray-500">Event atau konten anda akan muncul di sini</p>
+                        <h3 class="font-bold text-gray-900">{{ event.title }}</h3>
+                        <p class="text-sm text-gray-500">{{ event.location|default:"Online" }} • {{
+                            event.date|date:"H:i" }}</p>
                     </div>
                     <span class="px-3 py-1 bg-green-100 text-green-700 text-xs font-semibold rounded-full">Event</span>
                 </div>
+                {% empty %}
+                <div class="text-center py-6 text-gray-500">
+                    <p>Belum ada jadwal event mendatang.</p>
+                </div>
+                {% endfor %}
             </div>
         </div>
 

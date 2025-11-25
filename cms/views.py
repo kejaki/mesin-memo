@@ -137,7 +137,6 @@ def update_content_status(request, content_id):
     return JsonResponse({'success': False})
 
 @login_required
-@login_required
 def cms_dashboard(request):
     """Kanban view for content planning"""
     # Base query
@@ -156,6 +155,22 @@ def cms_dashboard(request):
     review_items = contents.filter(status=Status.REVIEW).order_by('-created_at')
     final_items = contents.filter(status=Status.FINAL).order_by('-created_at')
     uploaded_items = contents.filter(status=Status.UPLOADED).order_by('-created_at')
+
+    context = {
+        'contents': contents,
+        'search_query': search_query,
+        'ideas': idea_items,
+        'in_progress': in_progress_items,
+        'reviews': review_items,
+        'finals': final_items,
+        'uploaded': uploaded_items,
+        'idea_items': idea_items,
+        'in_progress_items': in_progress_items,
+        'review_items': review_items,
+        'final_items': final_items,
+        'uploaded_items': uploaded_items,
+    }
+    return render(request, 'cms/dashboard.html', context)
 
 @login_required
 def available_jobs(request):
