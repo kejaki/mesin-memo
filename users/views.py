@@ -89,9 +89,13 @@ def edit_profile(request):
     
     return render(request, 'users/edit_profile.html', {'form': form})
 
-@login_required
 def members_by_angkatan(request, angkatan):
     members = User.objects.filter(angkatan=angkatan, is_active=True).order_by('-points')
+    
+    # Search functionality
+    query = request.GET.get('q')
+    if query:
+        members = members.filter(username__icontains=query)
     
     context = {
         'angkatan': angkatan,

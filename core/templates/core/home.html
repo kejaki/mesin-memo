@@ -100,109 +100,88 @@
     <!-- Guest View: Top Leaderboard & Members -->
     <div class="mb-16 animate-fade-in-up delay-100">
         <h2 class="text-3xl font-bold text-gray-900 mb-8 text-center">🏆 Top Contributors</h2>
-        <div class="flex justify-center gap-8 flex-wrap">
+        <div class="flex justify-center items-end gap-4 md:gap-8 min-h-[300px]">
             {% for leader in top_leaders %}
-            <div class="bg-white p-6 rounded-2xl shadow-sm border border-gray-100 flex flex-col items-center w-64">
-                {% if leader.profile_photo %}
-                <img src="{{ leader.profile_photo.url }}"
-                    class="w-20 h-20 rounded-full object-cover mb-4 border-4 border-green-100">
-                {% else %}
-                <div
-                    class="w-20 h-20 rounded-full bg-green-100 flex items-center justify-center text-green-700 text-2xl font-bold mb-4">
-                    {{ leader.get_initials }}
-                </div>
-                {% endif %}
-                <h3 class="font-bold text-lg">{{ leader.username }}</h3>
-                <p class="text-green-600 font-bold">{{ leader.points }} XP</p>
-            </div>
-            {% endfor %}
-        </div>
-    </div>
+            <div class="relative flex flex-col items-center transition-all duration-300
+                {% if forloop.counter == 1 %}order-2 z-10 scale-110{% endif %}
+                {% if forloop.counter == 2 %}order-1 scale-95{% endif %}
+                {% if forloop.counter == 3 %}order-3 scale-90{% endif %}">
 
-    <!-- Members Horizontal Scroll - Angkatan 33 -->
-    <div class="mb-12 animate-fade-in-up delay-200">
-        <div class="flex items-center justify-between px-4 mb-6">
-            <h2 class="text-2xl font-bold text-gray-900">👥 Angkatan 33</h2>
-            <a href="{% url 'members_angkatan' 33 %}"
-                class="text-green-600 hover:text-green-700 text-sm font-medium">Lihat Semua &rarr;</a>
-        </div>
-        <div class="flex overflow-x-auto gap-6 pb-8 px-4 snap-x scrollbar-hide">
-            {% for member in members_33 %}
-            <div
-                class="flex-shrink-0 w-48 bg-white p-6 rounded-2xl shadow-sm border border-gray-100 flex flex-col items-center snap-center hover:shadow-md transition-shadow">
-                {% if member.profile_photo %}
-                <img src="{{ member.profile_photo.url }}"
-                    class="w-16 h-16 rounded-full object-cover mb-3 border-2 border-gray-100">
-                {% else %}
                 <div
-                    class="w-16 h-16 rounded-full bg-gray-100 flex items-center justify-center text-gray-500 text-xl font-bold mb-3 border-2 border-gray-100">
-                    {{ member.get_initials }}
-                </div>
-                {% endif %}
-                <p class="font-medium text-center truncate w-full">{{ member.username }}</p>
-                <p class="text-xs text-gray-500">{{ member.get_division_display }}</p>
-            </div>
-            {% empty %}
-            <p class="text-gray-500 px-4">Belum ada anggota di angkatan ini.</p>
-            {% endfor %}
-        </div>
-    </div>
+                    class="bg-white rounded-2xl shadow-xl border-2 flex flex-col items-center p-6 w-48 md:w-64
+                    {% if forloop.counter == 1 %}border-yellow-400 h-80 justify-center bg-gradient-to-b from-yellow-50 to-white{% endif %}
+                    {% if forloop.counter == 2 %}border-gray-300 h-64 justify-center bg-gradient-to-b from-gray-50 to-white{% endif %}
+                    {% if forloop.counter == 3 %}border-orange-300 h-56 justify-center bg-gradient-to-b from-orange-50 to-white{% endif %}">
 
-    <!-- Members Horizontal Scroll - Angkatan 34 -->
-    <div class="mb-12 animate-fade-in-up delay-200">
-        <div class="flex items-center justify-between px-4 mb-6">
-            <h2 class="text-2xl font-bold text-gray-900">👥 Angkatan 34</h2>
-            <a href="{% url 'members_angkatan' 34 %}"
-                class="text-green-600 hover:text-green-700 text-sm font-medium">Lihat Semua &rarr;</a>
-        </div>
-        <div class="flex overflow-x-auto gap-6 pb-8 px-4 snap-x scrollbar-hide">
-            {% for member in members_34 %}
-            <div
-                class="flex-shrink-0 w-48 bg-white p-6 rounded-2xl shadow-sm border border-gray-100 flex flex-col items-center snap-center hover:shadow-md transition-shadow">
-                {% if member.profile_photo %}
-                <img src="{{ member.profile_photo.url }}"
-                    class="w-16 h-16 rounded-full object-cover mb-3 border-2 border-gray-100">
-                {% else %}
-                <div
-                    class="w-16 h-16 rounded-full bg-gray-100 flex items-center justify-center text-gray-500 text-xl font-bold mb-3 border-2 border-gray-100">
-                    {{ member.get_initials }}
+                    <div class="relative mb-4">
+                        {% if leader.profile_photo %}
+                        <img src="{{ leader.profile_photo.url }}" class="rounded-full object-cover border-4 
+                            {% if forloop.counter == 1 %}w-24 h-24 border-yellow-400{% endif %}
+                            {% if forloop.counter == 2 %}w-20 h-20 border-gray-300{% endif %}
+                            {% if forloop.counter == 3 %}w-16 h-16 border-orange-300{% endif %}">
+                        {% else %}
+                        <div class="rounded-full flex items-center justify-center font-bold text-white shadow-inner
+                            {% if forloop.counter == 1 %}w-24 h-24 bg-yellow-400 text-3xl{% endif %}
+                            {% if forloop.counter == 2 %}w-20 h-20 bg-gray-300 text-2xl{% endif %}
+                            {% if forloop.counter == 3 %}w-16 h-16 bg-orange-300 text-xl{% endif %}">
+                            {{ leader.get_initials }}
+                        </div>
+                        {% endif %}
+
+                        <!-- Rank Badge -->
+                        <div class="absolute -bottom-3 left-1/2 transform -translate-x-1/2 w-8 h-8 rounded-full flex items-center justify-center text-white font-bold shadow-md
+                            {% if forloop.counter == 1 %}bg-yellow-500{% endif %}
+                            {% if forloop.counter == 2 %}bg-gray-400{% endif %}
+                            {% if forloop.counter == 3 %}bg-orange-400{% endif %}">
+                            {{ forloop.counter }}
+                        </div>
+                    </div>
+
+                    <h3 class="font-bold text-gray-900 text-center mb-1 truncate w-full px-2
+                        {% if forloop.counter == 1 %}text-xl{% else %}text-lg{% endif %}">
+                        {{ leader.username }}
+                    </h3>
+                    <p class="font-bold
+                        {% if forloop.counter == 1 %}text-yellow-600 text-lg{% endif %}
+                        {% if forloop.counter == 2 %}text-gray-500{% endif %}
+                        {% if forloop.counter == 3 %}text-orange-500{% endif %}">
+                        {{ leader.points }} XP
+                    </p>
                 </div>
-                {% endif %}
-                <p class="font-medium text-center truncate w-full">{{ member.username }}</p>
-                <p class="text-xs text-gray-500">{{ member.get_division_display }}</p>
             </div>
             {% empty %}
-            <p class="text-gray-500 px-4">Belum ada anggota di angkatan ini.</p>
+            <p class="text-gray-500 text-center w-full">Belum ada data leaderboard.</p>
             {% endfor %}
         </div>
     </div>
 
-    <!-- Members Horizontal Scroll - Angkatan 35 -->
+    <!-- Angkatan Swipe Section -->
     <div class="mb-16 animate-fade-in-up delay-200">
-        <div class="flex items-center justify-between px-4 mb-6">
-            <h2 class="text-2xl font-bold text-gray-900">👥 Angkatan 35</h2>
-            <a href="{% url 'members_angkatan' 35 %}"
-                class="text-green-600 hover:text-green-700 text-sm font-medium">Lihat Semua &rarr;</a>
-        </div>
+        <h2 class="text-2xl font-bold text-gray-900 mb-6 px-4">👥 Telusuri Angkatan</h2>
         <div class="flex overflow-x-auto gap-6 pb-8 px-4 snap-x scrollbar-hide">
-            {% for member in members_35 %}
-            <div
-                class="flex-shrink-0 w-48 bg-white p-6 rounded-2xl shadow-sm border border-gray-100 flex flex-col items-center snap-center hover:shadow-md transition-shadow">
-                {% if member.profile_photo %}
-                <img src="{{ member.profile_photo.url }}"
-                    class="w-16 h-16 rounded-full object-cover mb-3 border-2 border-gray-100">
-                {% else %}
-                <div
-                    class="w-16 h-16 rounded-full bg-gray-100 flex items-center justify-center text-gray-500 text-xl font-bold mb-3 border-2 border-gray-100">
-                    {{ member.get_initials }}
-                </div>
-                {% endif %}
-                <p class="font-medium text-center truncate w-full">{{ member.username }}</p>
-                <p class="text-xs text-gray-500">{{ member.get_division_display }}</p>
-            </div>
-            {% empty %}
-            <p class="text-gray-500 px-4">Belum ada anggota di angkatan ini.</p>
-            {% endfor %}
+            <!-- Angkatan 32 -->
+            <a href="{% url 'members_angkatan' 32 %}"
+                class="flex-shrink-0 w-72 h-40 bg-gradient-to-br from-blue-500 to-blue-600 rounded-2xl shadow-lg flex flex-col items-center justify-center text-white snap-center hover:scale-105 transition-transform cursor-pointer relative overflow-hidden group">
+                <div class="absolute inset-0 bg-white opacity-0 group-hover:opacity-10 transition-opacity"></div>
+                <h3 class="text-3xl font-bold mb-2">Angkatan 32</h3>
+                <span class="bg-white/20 px-4 py-1 rounded-full text-sm backdrop-blur-sm">Lihat Anggota &rarr;</span>
+            </a>
+
+            <!-- Angkatan 33 -->
+            <a href="{% url 'members_angkatan' 33 %}"
+                class="flex-shrink-0 w-72 h-40 bg-gradient-to-br from-green-500 to-emerald-600 rounded-2xl shadow-lg flex flex-col items-center justify-center text-white snap-center hover:scale-105 transition-transform cursor-pointer relative overflow-hidden group">
+                <div class="absolute inset-0 bg-white opacity-0 group-hover:opacity-10 transition-opacity"></div>
+                <h3 class="text-3xl font-bold mb-2">Angkatan 33</h3>
+                <span class="bg-white/20 px-4 py-1 rounded-full text-sm backdrop-blur-sm">Lihat Anggota &rarr;</span>
+            </a>
+
+            <!-- Angkatan 34 -->
+            <a href="{% url 'members_angkatan' 34 %}"
+                class="flex-shrink-0 w-72 h-40 bg-gradient-to-br from-purple-500 to-indigo-600 rounded-2xl shadow-lg flex flex-col items-center justify-center text-white snap-center hover:scale-105 transition-transform cursor-pointer relative overflow-hidden group">
+                <div class="absolute inset-0 bg-white opacity-0 group-hover:opacity-10 transition-opacity"></div>
+                <h3 class="text-3xl font-bold mb-2">Angkatan 34</h3>
+                <span class="bg-white/20 px-4 py-1 rounded-full text-sm backdrop-blur-sm">Lihat Anggota &rarr;</span>
+            </a>
         </div>
     </div>
 
