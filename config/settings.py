@@ -25,7 +25,7 @@ SECRET_KEY = 'django-insecure-p(&*3sm7s+$o$u*(t)=&0or#yxh3k#bejjqbiabrx)yklk(r6f
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ['media-moklet.vercel.app', '127.0.0.1', 'localhost']
 
 
 # Application definition
@@ -159,6 +159,7 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/5.2/howto/static-files/
 
 STATIC_URL = 'static/'
+STATIC_ROOT = BASE_DIR / 'staticfiles_build'
 
 # Default primary key field type
 # https://docs.djangoproject.com/en/5.2/ref/settings/#default-auto-field
